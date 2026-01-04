@@ -10,8 +10,13 @@ import SwiftData
 
 struct DashboardView: View {
     @Query private var transactions: [Transaction]
+    @Query private var budgets: [BudgetGoal]
     
     @State private var showAddSheet = false
+    @State private var showAddBudget = false
+    @State private var showAllBudgets = false
+    
+    @AppStorage("selectedTheme") private var selectedThemeRaw: String = AppTheme.system.rawValue
     
     // Computed Properties
     private var totalIncome: Double {
@@ -39,27 +44,54 @@ struct DashboardView: View {
             .sorted { $0.amount > $1.amount }
     }
     
+    // Active budgets
+    private var activeBudgets: [BudgetGoal] {
+        budgets.filter { $0.isActive }
+    }
+    
     var body: some View {
         Group {
-            if transactions.isEmpty {
+            if transactions.isEmpty && budgets.isEmpty {
                 emptyState
             } else {
                 dashboardContent
             }
         }
+        .id(selectedThemeRaw)
         .navigationTitle("Dashboard")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showAddSheet = true
+                Menu {
+                    Button {
+                        showAddSheet = true
+                        HapticManager.shared.impact(style: .light)
+                    } label: {
+                        Label("Add Transaction", systemImage: "dollarsign.circle")
+                    }
+                    
+                    Button {
+                        showAddBudget = true
+                        HapticManager.shared.impact(style: .light)
+                    } label: {
+                        Label("Add Budget Goal", systemImage: "target")
+                    }
                 } label: {
                     Label("Add", systemImage: "plus.circle.fill")
+                        .imageScale(.large)
                 }
             }
         }
         .sheet(isPresented: $showAddSheet) {
             AddTransactionView()
+        }
+        .sheet(isPresented: $showAddBudget) {
+            AddBudgetGoalView()
+        }
+        .sheet(isPresented: $showAllBudgets) {
+            NavigationStack {
+                BudgetGoalsView()
+            }
         }
     }
     
@@ -69,6 +101,12 @@ struct DashboardView: View {
         ScrollView {
             VStack(spacing: 20) {
                 statsSection
+                
+                // Budget Section (appears after stats, before category breakdown)
+                if !activeBudgets.isEmpty {
+                    budgetSection
+                }
+                
                 categoryBreakdownSection
             }
             .padding()
@@ -105,7 +143,64 @@ struct DashboardView: View {
             .transition(.scale.combined(with: .opacity))
         }
     }
-
+    
+    // Budget Section
+    private var budgetSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Budget Goals")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Spacer()
+                
+                Button {
+                    showAllBudgets = true
+                    HapticManager.shared.impact(style: .light)
+                } label: {
+                    Text("See All")
+                        .font(.subheadline)
+                        .foregroundStyle(.orange)
+                }
+            }
+            
+            // Show first 2 budgets only
+            ForEach(activeBudgets.prefix(2)) { budget in
+                BudgetProgressView(budget: budget, transactions: transactions)
+                    .onTapGesture {
+                        showAllBudgets = true
+                        HapticManager.shared.impact(style: .light)
+                    }
+            }
+            
+            // Show count if more budgets exist
+            if activeBudgets.count > 2 {
+                Button {
+                    showAllBudgets = true
+                    HapticManager.shared.impact(style: .light)
+                } label: {
+                    HStack {
+                        Text("+\(activeBudgets.count - 2) more \(activeBudgets.count - 2 == 1 ? "budget" : "budgets")")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.background)
+                            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
     
     private var categoryBreakdownSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -146,11 +241,25 @@ struct DashboardView: View {
     }
     
     private var emptyState: some View {
-        ContentUnavailableView(
-            "No Data Yet",
-            systemImage: "chart.bar.fill",
-            description: Text("Add transactions to see your financial overview")
-        )
+        VStack(spacing: 20) {
+            ContentUnavailableView(
+                "No Data Yet",
+                systemImage: "chart.bar.fill",
+                description: Text("Add transactions and budget goals to see your financial overview")
+            )
+            Button {
+                showAddSheet = true
+                HapticManager.shared.impact(style: .medium)
+            } label: {
+                Label("Add Transaction", systemImage: "dollarsign.circle")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.bottom, 5)
+            }
+        }
     }
 }
 

@@ -15,6 +15,8 @@ struct TransactionListView: View {
     // Dynamische Query
     @Query private var allTransactions: [Transaction]
     
+    @AppStorage("selectedTheme") private var selectedThemeRaw: String = AppTheme.system.rawValue
+    
     // Gefilterte & sortierte Transactions
     private var filteredTransactions: [Transaction] {
         var result = allTransactions
@@ -75,6 +77,7 @@ struct TransactionListView: View {
                 transactionList
             }
         }
+        .id(selectedThemeRaw)
         .navigationTitle("Transactions")
         .navigationBarTitleDisplayMode(.large)
         .searchable(text: $searchText, prompt: "Search transactions")

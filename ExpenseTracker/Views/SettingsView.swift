@@ -13,6 +13,10 @@ struct SettingsView: View {
     @Query private var transactions: [Transaction]
     
     @AppStorage("selectedTheme") private var selectedThemeRaw: String = AppTheme.system.rawValue
+    @AppStorage("biometricLockEnabled") private var biometricLockEnabled = false
+    @AppStorage("lockTimeout") private var lockTimeout = 1
+    
+    private let authManager = BiometricAuthManager.shared
     
     private var selectedTheme: AppTheme {
         get {
@@ -44,8 +48,29 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                if authManager.isBiometricAvailable {
+                    Section {
+                        Toggle(isOn: $biometricLockEnabled) {
+                            Label("\(authManager.biometricType.displayName) Lock", systemImage: authManager.biometricType.icon)
+                        }
+                        .tint(.brandOrange)
+                        
+                        if biometricLockEnabled {
+                            Picker("Auto-lock after", selection: $lockTimeout) {
+                                Text("Immediately").tag(0)
+                                Text("1 minute").tag(1)
+                                Text("5 minutes").tag(5)
+                                Text("15 minutes").tag(15)
+                            }
+                        }
+                    } header: {
+                        Text("Security")
+                    } footer: {
+                        Text("Require \(authManager.biometricType.displayName) to unlock the app after being in background.")
+                    }
+                }
                 appearanceSection
-                exportSection  // ← NEU!
+                exportSection
                 dataSection
                 aboutSection
             }

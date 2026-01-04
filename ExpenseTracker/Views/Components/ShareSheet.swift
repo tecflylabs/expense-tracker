@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import UIKit
+internal import UIKit
 
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]

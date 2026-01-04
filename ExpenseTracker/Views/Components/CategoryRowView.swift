@@ -21,7 +21,7 @@ struct CategoryRowView: View {
                 .frame(width: 44, height: 44)
                 .background(
                     Circle()
-                        .fill(.red.gradient)
+                        .fill(.orange.gradient)
                 )
             
             // Category Name
@@ -39,7 +39,7 @@ struct CategoryRowView: View {
                         
                         // Progress
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(.red.gradient)
+                            .fill(.orange.gradient)
                             .frame(width: geometry.size.width * (percentage / 100), height: 6)
                     }
                 }
