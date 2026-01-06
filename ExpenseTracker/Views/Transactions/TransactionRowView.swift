@@ -25,7 +25,7 @@ struct TransactionRowView: View {
                 .scaleEffect(appeared ? 1.0 : 0.5)
                 .animation(.bouncy.delay(0.1), value: appeared)
                 .overlay(alignment: .topTrailing) {
-                    if transaction.isRecurring {  // ← NEU!
+                    if transaction.isRecurring {
                         Image(systemName: "repeat.circle.fill")
                             .font(.caption2)
                             .foregroundStyle(.white)
@@ -57,7 +57,8 @@ struct TransactionRowView: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text(transaction.type == .income ? "+" : "-" + transaction.amount.asCurrency())
+                // ✅ FIXED: String interpolation instead of concatenation
+                Text("\(transaction.type == .income ? "+" : "-")\(transaction.amount.asCurrency())")
                     .font(.headline)
                     .foregroundStyle(transaction.type == .income ? Color.income : Color.expense)
                 
@@ -81,6 +82,14 @@ struct TransactionRowView: View {
     List {
         TransactionRowView(transaction: .preview)
         TransactionRowView(transaction: Transaction(
+            title: "Salary",
+            amount: 3000.00,
+            date: Date.now,
+            category: .other,
+            type: .income,  // ✅ Added Income preview
+            isRecurring: true
+        ))
+        TransactionRowView(transaction: Transaction(
             title: "Netflix",
             amount: 15.99,
             date: Date.now,
@@ -90,4 +99,3 @@ struct TransactionRowView: View {
         ))
     }
 }
-

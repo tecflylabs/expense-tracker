@@ -139,7 +139,7 @@ struct RecurringRowView: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text(recurring.type == .income ? "+" : "-" + recurring.amount.asCurrency())
+                Text("\(recurring.type == .income ? "+" : "-")\(recurring.amount.asCurrency())")
                     .font(.headline)
                     .foregroundStyle(recurring.type == .income ? .green : .red)
                 
