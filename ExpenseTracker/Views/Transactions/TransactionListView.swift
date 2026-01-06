@@ -108,6 +108,14 @@ struct TransactionListView: View {
                     Label("Add", systemImage: "plus.circle.fill")
                 }
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    RecurringTransactionsView()
+                } label: {
+                    Image(systemName: "repeat.circle.fill")
+                        .foregroundStyle(.orange)
+                }
+            }
             
             ToolbarItem(placement: .topBarLeading) {
                 Button {

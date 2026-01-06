@@ -1,3 +1,10 @@
+//
+//  MainTabView.swift
+//  PennyFlow
+//
+//  Created by Manuel Zangl
+//
+
 import SwiftUI
 import SwiftData
 
@@ -15,13 +22,15 @@ struct MainTabView: View {
     
     var body: some View {
         TabView {
+            // Dashboard
             NavigationStack {
                 DashboardView()
             }
             .tabItem {
-                Label("Dashboard", systemImage: "chart.bar.fill")
+                Label("Dashboard", systemImage: "house.fill")
             }
             
+            // Transactions (with Recurring access inside)
             NavigationStack {
                 TransactionListView()
             }
@@ -29,20 +38,19 @@ struct MainTabView: View {
                 Label("Transactions", systemImage: "list.bullet")
             }
             
-            RecurringTransactionsView()
+            // ✨ NEW: Insights (Statistics + Charts)
+            InsightsView()
                 .tabItem {
-                    Label("Recurring", systemImage: "repeat.circle")
+                    Label("Insights", systemImage: "chart.line.uptrend.xyaxis")
                 }
             
-            ChartsView()
-                .tabItem {
-                    Label("Charts", systemImage: "chart.xyaxis.line")
-                }
-            
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
+            // Settings
+            NavigationStack {
+                SettingsView()
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gearshape.fill")
+            }
         }
         .preferredColorScheme(colorScheme)
     }
