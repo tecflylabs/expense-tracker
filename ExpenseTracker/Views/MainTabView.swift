@@ -10,6 +10,7 @@ import SwiftData
 
 struct MainTabView: View {
     @AppStorage("selectedTheme") private var selectedThemeRaw: String = AppTheme.system.rawValue
+    @Environment(\.modelContext) private var modelContext
     
     private var colorScheme: ColorScheme? {
         let theme = AppTheme(rawValue: selectedThemeRaw) ?? .system
@@ -53,6 +54,7 @@ struct MainTabView: View {
             }
         }
         .preferredColorScheme(colorScheme)
+        .id(colorScheme)
     }
 }
 

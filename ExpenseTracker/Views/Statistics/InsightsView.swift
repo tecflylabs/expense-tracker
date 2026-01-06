@@ -13,8 +13,13 @@ struct InsightsView: View {
     @State private var chartsViewModel = ChartsViewModel()
     
     private var calculator: StatisticsCalculator {
-        StatisticsCalculator(transactions: transactions)
+        // ✨ Safe: Nur wenn transactions existiert
+        guard !transactions.isEmpty else {
+            return StatisticsCalculator(transactions: [])
+        }
+        return StatisticsCalculator(transactions: transactions)
     }
+
     
     var body: some View {
         NavigationStack {
