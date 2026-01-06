@@ -1,6 +1,6 @@
 //
 //  CategoryRowView.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 02.01.26.
 //
@@ -14,14 +14,14 @@ struct CategoryRowView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Icon
+            // Icon - ✨ NOW WITH CATEGORY COLORS
             Image(systemName: category.systemImage)
                 .font(.title3)
                 .foregroundStyle(.white)
                 .frame(width: 44, height: 44)
                 .background(
                     Circle()
-                        .fill(.orange.gradient)
+                        .fill(category.gradient)
                 )
             
             // Category Name
@@ -29,7 +29,7 @@ struct CategoryRowView: View {
                 Text(category.rawValue)
                     .font(.headline)
                 
-                // Progress Bar
+                // Progress Bar - ✨ NOW WITH CATEGORY COLORS
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         // Background
@@ -37,10 +37,11 @@ struct CategoryRowView: View {
                             .fill(.gray.opacity(0.2))
                             .frame(height: 6)
                         
-                        // Progress
+                        // Progress - ✨ Category color
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(.orange.gradient)
+                            .fill(category.gradient)
                             .frame(width: geometry.size.width * (percentage / 100), height: 6)
+                            .animation(.spring(duration: 0.3), value: percentage)
                     }
                 }
                 .frame(height: 6)
@@ -67,5 +68,6 @@ struct CategoryRowView: View {
         CategoryRowView(category: .food, amount: 450.50, percentage: 35)
         CategoryRowView(category: .transport, amount: 200.00, percentage: 15)
         CategoryRowView(category: .shopping, amount: 600.00, percentage: 50)
+        CategoryRowView(category: .entertainment, amount: 120.00, percentage: 10)
     }
 }

@@ -13,14 +13,14 @@ struct TransactionRowView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Icon
+            // Icon - WITH CATEGORY COLORS
             Image(systemName: transaction.category.systemImage)
                 .font(.title2)
                 .foregroundStyle(.white)
                 .frame(width: 50, height: 50)
                 .background(
                     Circle()
-                        .fill(transaction.type == .income ? Color.incomeGradient : Color.expenseGradient)
+                        .fill(transaction.category.gradient)
                 )
                 .scaleEffect(appeared ? 1.0 : 0.5)
                 .animation(.bouncy.delay(0.1), value: appeared)
@@ -40,26 +40,31 @@ struct TransactionRowView: View {
                 Text(transaction.title)
                     .font(.headline)
                 
-                // Category + Tags (Inline, subtle)
+                // ✨ OPTION 1: Category Dot + Tags (NO BREAKING)
                 HStack(spacing: 6) {
-                    Text(transaction.category.rawValue)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    // Color indicator
+                    Circle()
+                        .fill(transaction.category.color)
+                        .frame(width: 8, height: 8)
                     
-                    // Show tags inline (text only, no chips)
+                    // Show tags OR category name
                     if !transaction.tags.isEmpty {
-                        Text("·")
-                            .foregroundStyle(.secondary)
-                        
                         Text(transaction.tags.prefix(2).map { "#\($0)" }.joined(separator: "   "))
                             .font(.caption)
                             .foregroundStyle(.orange.opacity(0.7))
+                            .lineLimit(1)
                         
                         if transaction.tags.count > 2 {
                             Text("+\(transaction.tags.count - 2)")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                         }
+                    } else {
+                        // No tags? Show category name
+                        Text(transaction.category.rawValue)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
                     }
                 }
             }
@@ -91,32 +96,43 @@ struct TransactionRowView: View {
 #Preview {
     List {
         TransactionRowView(transaction: Transaction(
-            title: "Kebab",
-            amount: 5.00,
+            title: "Hose",
+            amount: 24.00,
             date: Date.now,
-            category: .food,
+            category: .shopping,
             type: .expense,
-            notes: "Lunch #food #nice",
-            isRecurring: false
-        ))
-        
-        TransactionRowView(transaction: Transaction(
-            title: "Groceries",
-            amount: 45.99,
-            date: Date.now,
-            category: .food,
-            type: .expense,
-            notes: "Shopping #weekly #food #essentials",
+            notes: "",
             isRecurring: false
         ))
         
         TransactionRowView(transaction: Transaction(
             title: "Salary",
-            amount: 3000.00,
+            amount: 2000.00,
             date: Date.now,
-            category: .other,
+            category: .salary,
             type: .income,
-            isRecurring: true
+            notes: "#salary",
+            isRecurring: false
+        ))
+        
+        TransactionRowView(transaction: Transaction(
+            title: "Auto",
+            amount: 50.00,
+            date: Date.now,
+            category: .transport,
+            type: .expense,
+            notes: "#teuer2 #gut",
+            isRecurring: false
+        ))
+        
+        TransactionRowView(transaction: Transaction(
+            title: "Kebab",
+            amount: 5.00,
+            date: Date.now,
+            category: .food,
+            type: .expense,
+            notes: "#food #nice",
+            isRecurring: false
         ))
     }
 }

@@ -52,7 +52,7 @@ struct CategoryPieChartView: View {
                 angularInset: 1.5
             )
             .cornerRadius(5)
-            .foregroundStyle(colorForCategory(item.category))
+            .foregroundStyle(item.category.gradient)
             .opacity(selectedCategory == nil || selectedCategory == item.category ? 1.0 : 0.3)
         }
         .frame(height: 250)

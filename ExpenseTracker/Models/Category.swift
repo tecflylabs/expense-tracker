@@ -1,11 +1,12 @@
 //
 //  Category.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 30.12.25.
 //
 
 import Foundation
+import SwiftUI
 import Charts
 
 enum Category: String, Codable, CaseIterable, Plottable {
@@ -37,6 +38,37 @@ enum Category: String, Codable, CaseIterable, Plottable {
         case .other:
             return "ellipsis.circle.fill"
         }
+    }
+    
+    // ✨ NEW: Category Colors
+    var color: Color {
+        switch self {
+        case .food:
+            return .orange
+        case .transport:
+            return .blue
+        case .shopping:
+            return .purple
+        case .entertainment:
+            return .pink
+        case .health:
+            return .red
+        case .bills:
+            return .gray
+        case .salary:
+            return .green
+        case .other:
+            return .gray
+        }
+    }
+    
+    // Gradient for visual richness
+    var gradient: LinearGradient {
+        LinearGradient(
+            colors: [color, color.opacity(0.7)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
     
     var primitivePlottable: String {

@@ -1,6 +1,6 @@
 //
 //  AddTransactionView.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 02.01.26.
 //
@@ -12,10 +12,8 @@ struct AddTransactionView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     
-    // Edit Mode: Wenn transaction übergeben wird, bearbeiten wir es
     var transactionToEdit: Transaction?
     
-    // Form Fields
     @State private var title: String = ""
     @State private var amount: String = ""
     @State private var selectedCategory: Category = .food
@@ -23,10 +21,8 @@ struct AddTransactionView: View {
     @State private var date: Date = Date()
     @State private var notes: String = ""
     
-    // Validation
     @State private var showValidationError: Bool = false
     
-    // Computed
     private var isEditMode: Bool {
         transactionToEdit != nil
     }
@@ -66,8 +62,6 @@ struct AddTransactionView: View {
         }
     }
     
-    // MARK: - Form Sections
-    
     private var basicInfoSection: some View {
         Section("Basic Information") {
             TextField("Title", text: $title)
@@ -90,15 +84,47 @@ struct AddTransactionView: View {
         }
     }
     
+    // ✨ ENHANCED: Visual category picker with colors
     private var categorySection: some View {
         Section("Category") {
             Picker("Category", selection: $selectedCategory) {
                 ForEach(Category.allCases, id: \.self) { category in
-                    Label(category.rawValue, systemImage: category.systemImage)
-                        .tag(category)
+                    HStack {
+                        Image(systemName: category.systemImage)
+                            .foregroundStyle(category.color)
+                        Text(category.rawValue)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                    .tag(category)
                 }
             }
             .pickerStyle(.menu)
+            .tint(.orange)
+            
+            // ✨ Visual preview of selected category
+            HStack {
+                Spacer()
+                Image(systemName: selectedCategory.systemImage)
+                    .font(.title2)
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+                    .background(
+                        Circle()
+                            .fill(selectedCategory.gradient)
+                    )
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Selected")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(selectedCategory.rawValue)
+                        .font(.headline)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
+            }
         }
     }
     
@@ -120,12 +146,9 @@ struct AddTransactionView: View {
         }
     }
     
-    // MARK: - Methods
-    
     private func loadTransactionData() {
         guard let transaction = transactionToEdit else { return }
         
-        // Edit Mode: Felder mit existierenden Daten füllen
         title = transaction.title
         amount = String(format: "%.2f", transaction.amount)
         selectedCategory = transaction.category
@@ -135,7 +158,6 @@ struct AddTransactionView: View {
     }
     
     private func saveTransaction() {
-        // Validation
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty,
               let amountValue = Double(amount.replacingOccurrences(of: ",", with: ".")),
               amountValue > 0 else {
@@ -144,11 +166,9 @@ struct AddTransactionView: View {
             return
         }
         
-        // Haptic Feedback
         HapticManager.shared.notification(type: .success)
         
         if let transaction = transactionToEdit {
-            // Update existing transaction
             transaction.title = title
             transaction.amount = amountValue
             transaction.category = selectedCategory
@@ -156,7 +176,6 @@ struct AddTransactionView: View {
             transaction.date = date
             transaction.notes = notes.isEmpty ? nil : notes
         } else {
-            // Create new transaction
             let newTransaction = Transaction(
                 title: title,
                 amount: amountValue,
@@ -168,12 +187,10 @@ struct AddTransactionView: View {
             context.insert(newTransaction)
         }
         
-        // Animated Dismiss
         withAnimation(.smooth) {
             dismiss()
         }
     }
-
 }
 
 #Preview("New Transaction") {
@@ -185,4 +202,3 @@ struct AddTransactionView: View {
     AddTransactionView(transactionToEdit: .preview)
         .modelContainer(previewContainer())
 }
-

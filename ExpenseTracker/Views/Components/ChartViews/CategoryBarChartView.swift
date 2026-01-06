@@ -2,7 +2,7 @@ import SwiftUI
 import Charts
 
 struct CategoryBarChartView: View {
-    let data:  [CategoryChartData]
+    let data: [CategoryChartData]
     @State private var selectedCategory: Category?
     
     var body: some View {
@@ -43,9 +43,14 @@ struct CategoryBarChartView: View {
                 y: .value("Category", item.category.rawValue)
             )
             .foregroundStyle(
-                selectedCategory == nil || selectedCategory == item.category
-                ? Color.brandOrange.gradient
-                : Color.brandOrange.opacity(0.3).gradient
+                LinearGradient(
+                    colors: [
+                        (selectedCategory == nil || selectedCategory == item.category) ? item.category.color : item.category.color.opacity(0.3),
+                        (selectedCategory == nil || selectedCategory == item.category) ? item.category.color.opacity(0.7) : item.category.color.opacity(0.2)
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
             )
             .cornerRadius(8)
         }
@@ -57,11 +62,14 @@ struct CategoryBarChartView: View {
                 AxisValueLabel {
                     if let category = value.as(String.self),
                        let cat = Category(rawValue: category) {
-                        HStack(spacing: 4) {
+                        HStack(spacing: 6) {
                             Image(systemName: cat.systemImage)
                                 .font(.caption)
+                                .foregroundStyle(cat.color)
                             Text(category)
                                 .font(.caption)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                         }
                     }
                 }
@@ -78,6 +86,7 @@ struct CategoryBarChartView: View {
                 }
         )
     }
+
     
     private var emptyState: some View {
         ContentUnavailableView(
@@ -93,6 +102,8 @@ struct CategoryBarChartView: View {
     CategoryBarChartView( data: [
         CategoryChartData(category: .food, amount: 450, percentage: 45),
         CategoryChartData(category: .transport, amount: 300, percentage: 30),
-        CategoryChartData(category: .shopping, amount: 150, percentage: 15)
+        CategoryChartData(category: .shopping, amount: 150, percentage: 15),
+        CategoryChartData(category: .entertainment, amount: 100, percentage: 10)
     ])
+    .padding()
 }

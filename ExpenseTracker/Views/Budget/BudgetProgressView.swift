@@ -29,10 +29,16 @@ struct BudgetProgressView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header
+            // Header - ✨ NOW WITH CATEGORY COLORS
             HStack {
                 Image(systemName: budget.category.systemImage)
-                    .foregroundStyle(warningLevel.color)
+                    .font(.title3)
+                    .foregroundStyle(.white)
+                    .frame(width: 36, height: 36)
+                    .background(
+                        Circle()
+                            .fill(budget.category.gradient)
+                    )
                 
                 Text(budget.category.rawValue)
                     .font(.headline)
@@ -44,14 +50,14 @@ struct BudgetProgressView: View {
                     .imageScale(.small)
             }
             
-            // Progress Bar
+            // Progress Bar - ✨ Warning color takes priority
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     // Background
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.gray.opacity(0.2))
                     
-                    // Progress
+                    // Progress - Warning color overrides category color
                     RoundedRectangle(cornerRadius: 8)
                         .fill(
                             LinearGradient(
@@ -117,6 +123,13 @@ struct BudgetProgressView: View {
         Transaction(title: "Groceries", amount: 375, date: Date(), category: .food, type: .expense)
     ]
     
-    return BudgetProgressView(budget: previewBudget, transactions: previewTransactions)
-        .padding()
+    return VStack(spacing: 16) {
+        BudgetProgressView(budget: previewBudget, transactions: previewTransactions)
+        
+        BudgetProgressView(
+            budget: BudgetGoal(category: .transport, monthlyLimit: 200),
+            transactions: [Transaction(title: "Uber", amount: 50, date: Date(), category: .transport, type: .expense)]
+        )
+    }
+    .padding()
 }
