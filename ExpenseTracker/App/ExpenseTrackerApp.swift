@@ -11,8 +11,10 @@ struct ExpenseTrackerApp: App {
     @AppStorage("selectedTheme") private var selectedThemeRaw: String = AppTheme.system.rawValue
     @AppStorage("biometricLockEnabled") private var biometricLockEnabled = false
     @AppStorage("lockTimeout") private var lockTimeout = 1
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     
     @State private var showLockScreen = false
+    @State private var showOnboarding = false
     
     private let authManager = BiometricAuthManager.shared
     
@@ -33,7 +35,8 @@ struct ExpenseTrackerApp: App {
                     .preferredColorScheme(colorScheme)
                     .blur(radius: showLockScreen ? 10 : 0)
                 
-                if showLockScreen && biometricLockEnabled {
+                // ✅ CHANGED: Only show lock if onboarding completed
+                if showLockScreen && biometricLockEnabled && hasCompletedOnboarding {
                     BiometricLockView {
                         withAnimation {
                             showLockScreen = false
@@ -46,18 +49,35 @@ struct ExpenseTrackerApp: App {
             .onAppear {
                 setupLifecycleObservers()
                 
-                // Show lock screen on first launch
-                if biometricLockEnabled && authManager.isBiometricAvailable {
+                // ✅ PRIORITY 1: Check onboarding FIRST
+                if !hasCompletedOnboarding {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showOnboarding = true
+                    }
+                    // ✅ PRIORITY 2: Then check lock (only if onboarding done)
+                } else if biometricLockEnabled && authManager.isBiometricAvailable {
                     showLockScreen = true
+                }
+            }
+            .fullScreenCover(isPresented: $showOnboarding) {
+                OnboardingView()
+            }
+            // ✅ NEW: When onboarding completes, check if we need lock
+            .onChange(of: hasCompletedOnboarding) { oldValue, newValue in
+                if newValue && biometricLockEnabled && authManager.isBiometricAvailable {
+                    // Onboarding just completed, now show lock
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showLockScreen = true
+                    }
                 }
             }
         }
         .modelContainer(sharedModelContainer())
     }
     
-    // ✅ NEW: Setup NotificationCenter observers
+    // MARK: - Lifecycle Observers
+    
     private func setupLifecycleObservers() {
-        // Observe when app goes to background
         NotificationCenter.default.addObserver(
             forName: UIApplication.willResignActiveNotification,
             object: nil,
@@ -66,7 +86,6 @@ struct ExpenseTrackerApp: App {
             handleAppBackground()
         }
         
-        // Observe when app comes to foreground
         NotificationCenter.default.addObserver(
             forName: UIApplication.didBecomeActiveNotification,
             object: nil,
@@ -77,9 +96,9 @@ struct ExpenseTrackerApp: App {
     }
     
     private func handleAppBackground() {
-        guard biometricLockEnabled && authManager.isBiometricAvailable else { return }
+        // ✅ CHANGED: Only record time if onboarding completed
+        guard hasCompletedOnboarding && biometricLockEnabled && authManager.isBiometricAvailable else { return }
         
-        // Record time when going to background
         authManager.recordBackgroundTime()
         
 #if DEBUG
@@ -88,9 +107,9 @@ struct ExpenseTrackerApp: App {
     }
     
     private func handleAppForeground() {
-        guard biometricLockEnabled && authManager.isBiometricAvailable else { return }
+        // ✅ CHANGED: Only check lock if onboarding completed
+        guard hasCompletedOnboarding && biometricLockEnabled && authManager.isBiometricAvailable else { return }
         
-        // Check if we need to re-lock
         if authManager.isAuthenticated {
             if authManager.shouldRequireAuthentication(timeoutMinutes: lockTimeout) {
 #if DEBUG

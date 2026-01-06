@@ -44,38 +44,25 @@ struct SettingsView: View {
         totalIncome - totalExpense
     }
     
-    
     var body: some View {
         NavigationStack {
             Form {
                 if authManager.isBiometricAvailable {
-                    Section {
-                        Toggle(isOn: $biometricLockEnabled) {
-                            Label("\(authManager.biometricType.displayName) Lock", systemImage: authManager.biometricType.icon)
-                        }
-                        .tint(.brandOrange)
-                        
-                        if biometricLockEnabled {
-                            Picker("Auto-lock after", selection: $lockTimeout) {
-                                Text("Immediately").tag(0)
-                                Text("1 minute").tag(1)
-                                Text("5 minutes").tag(5)
-                                Text("15 minutes").tag(15)
-                            }
-                        }
-                    } header: {
-                        Text("Security")
-                    } footer: {
-                        Text("Require \(authManager.biometricType.displayName) to unlock the app after being in background.")
-                    }
+                    securitySection
                 }
                 appearanceSection
+                supportSection  
                 exportSection
                 dataSection
                 aboutSection
+                
+#if DEBUG
+                debugSection
+#endif
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
+            .tint(.brandOrange)  // ✅ Global orange tint
             .alert("Delete All Data", isPresented: $showDeleteAlert) {
                 Button("Cancel", role: .cancel) { }
                 Button("Delete", role: .destructive) {
@@ -97,7 +84,86 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Sections
+    // MARK: - Security Section
+    
+    private var securitySection: some View {
+        Section {
+            Toggle(isOn: $biometricLockEnabled) {
+                Label("\(authManager.biometricType.displayName) Lock", systemImage: authManager.biometricType.icon)
+            }
+            .tint(.brandOrange)
+            
+            if biometricLockEnabled {
+                Picker("Auto-lock after", selection: $lockTimeout) {
+                    Text("Immediately").tag(0)
+                    Text("1 minute").tag(1)
+                    Text("5 minutes").tag(5)
+                    Text("15 minutes").tag(15)
+                }
+            }
+        } header: {
+            Text("Security")
+        } footer: {
+            Text("Require \(authManager.biometricType.displayName) to unlock the app after being in background.")
+        }
+    }
+    
+    // MARK: - Appearance Section
+    
+    private var appearanceSection: some View {
+        Section {
+            Picker("Theme", selection: Binding(
+                get: { selectedTheme },
+                set: { newValue in
+                    selectedThemeRaw = newValue.rawValue
+                }
+            )) {
+                ForEach(AppTheme.allCases) { theme in
+                    Label(theme.rawValue, systemImage: theme.icon)
+                        .tag(theme)
+                }
+            }
+            .pickerStyle(.menu)
+        } header: {
+            Label("Appearance", systemImage: "paintbrush.fill")
+        } footer: {
+            Text("Choose between light, dark, or automatic theme based on system settings.")
+        }
+    }
+    
+    // MARK: - Support Section (Combined)
+    
+    private var supportSection: some View {
+        Section {
+            // Send Feedback
+            Link(destination: URL(string: "mailto:zangl.manuel@gmail.com?subject=ExpenseTracker Feedback")!) {
+                HStack {
+                    Label("Send Feedback", systemImage: "envelope.fill")
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            
+            // Buy Me a Coffee
+            Link(destination: URL(string: "https://buymeacoffee.com/yourname")!) {
+                HStack {
+                    Label("Buy Me a Coffee", systemImage: "cup.and.saucer.fill")
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Label("Support", systemImage: "heart.fill")
+        } footer: {
+            Text("Have feedback or want to support development? We'd love to hear from you!")
+        }
+    }
+    
+    // MARK: - Export Section
     
     private var exportSection: some View {
         Section {
@@ -120,6 +186,72 @@ struct SettingsView: View {
             Text("Export your transactions for backup or tax purposes.")
         }
     }
+    
+    // MARK: - Data Section
+    
+    private var dataSection: some View {
+        Section {
+            HStack {
+                Text("Total Transactions")
+                Spacer()
+                Text("\(transactions.count)")
+                    .foregroundStyle(.secondary)
+            }
+            
+            Button(role: .destructive) {
+                showDeleteAlert = true
+            } label: {
+                Label("Delete All Data", systemImage: "trash")
+            }
+            .disabled(transactions.isEmpty)
+        } header: {
+            Label("Data Management", systemImage: "externaldrive.fill")
+        }
+    }
+    
+    // MARK: - About Section
+    
+    private var aboutSection: some View {
+        Section {
+            LabeledContent("Version", value: "1.0.0")
+            LabeledContent("Build", value: "1")
+            
+            Link(destination: URL(string: "https://github.com/yourusername")!) {
+                HStack {
+                    Label("GitHub Repository", systemImage: "link")
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Label("About", systemImage: "info.circle.fill")
+        } footer: {
+            Text("Built with SwiftUI & SwiftData\n© 2026 ExpenseTracker")
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 8)
+        }
+    }
+    
+    // MARK: - Debug Section
+    
+#if DEBUG
+    private var debugSection: some View {
+        Section {
+            Button("Reset Onboarding") {
+                UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
+                HapticManager.shared.notification(type: .success)
+            }
+            .foregroundStyle(.orange)
+        } header: {
+            Label("Debug", systemImage: "ladybug.fill")
+        }
+    }
+#endif
+    
+    // MARK: - Methods
     
     private func exportAsCSV() {
         isExporting = true
@@ -165,67 +297,6 @@ struct SettingsView: View {
             }
         }
     }
-    
-    private var appearanceSection: some View {
-        Section {
-            Picker("Theme", selection: Binding(
-                get: { selectedTheme },
-                set: { newValue in
-                    selectedThemeRaw = newValue.rawValue
-                }
-            )) {
-                ForEach(AppTheme.allCases) { theme in
-                    Label(theme.rawValue, systemImage: theme.icon)
-                        .tag(theme)
-                }
-            }
-            .pickerStyle(.menu)
-        } header: {
-            Label("Appearance", systemImage: "paintbrush.fill")
-        } footer: {
-            Text("Choose between light, dark, or automatic theme based on system settings.")
-        }
-    }
-    
-    private var dataSection: some View {
-        Section {
-            HStack {
-                Text("Total Transactions")
-                Spacer()
-                Text("\(transactions.count)")
-                    .foregroundStyle(.secondary)
-            }
-            
-            Button(role: .destructive) {
-                showDeleteAlert = true
-            } label: {
-                Label("Delete All Data", systemImage: "trash")
-            }
-            .disabled(transactions.isEmpty)
-        } header: {
-            Label("Data Management", systemImage: "externaldrive.fill")
-        }
-    }
-    
-    private var aboutSection: some View {
-        Section {
-            LabeledContent("Version", value: "1.0.0")
-            LabeledContent("Build", value: "1")
-            
-            Link(destination: URL(string: "https://github.com")!) {
-                Label("GitHub Repository", systemImage: "link")
-            }
-        } header: {
-            Label("About", systemImage: "info.circle.fill")
-        } footer: {
-            Text("Built with SwiftUI & SwiftData\n© 2026 Expense Tracker")
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 8)
-        }
-    }
-    
-    // MARK: - Methods
     
     private func deleteAllTransactions() {
         for transaction in transactions {
