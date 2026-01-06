@@ -1,6 +1,6 @@
 //
 //  TransactionDetailView.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 02.01.26.
 //
@@ -68,7 +68,7 @@ struct TransactionDetailView: View {
                 
                 Spacer()
                 
-                Text(transaction.type == .income ? "+" : "-" + transaction.amount.asCurrency())
+                Text("\(transaction.type == .income ? "+" : "-")\(transaction.amount.asCurrency())")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundStyle(transaction.type == .income ? .green : .red)
@@ -97,10 +97,29 @@ struct TransactionDetailView: View {
         }
     }
     
+    // Notes section with tags
     private func notesSection(_ notes: String) -> some View {
-        Section("Notes") {
+        Section {
             Text(notes)
                 .font(.body)
+            
+            // Show tags if available
+            if !transaction.tags.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Tags")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
+                    
+                    TagListView(tags: transaction.tags) { tag in
+                        // Future: Filter by tag in parent view
+                        print("Tapped tag: \(tag)")
+                    }
+                }
+                .padding(.top, 8)
+            }
+        } header: {
+            Label("Notes", systemImage: "note.text")
         }
     }
     

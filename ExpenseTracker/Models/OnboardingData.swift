@@ -1,6 +1,6 @@
 //
 //  OnboardingData.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 06.01.26.
 //
@@ -20,7 +20,7 @@ struct OnboardingPage: Identifiable {
 extension OnboardingPage {
     static let pages: [OnboardingPage] = [
         OnboardingPage(
-            title: "Track Every Expense",
+            title: "Track Every Penny",
             subtitle: "Stay on top of your finances",
             imageName: "chart.line.uptrend.xyaxis",
             imageColor: .blue,
@@ -43,10 +43,10 @@ extension OnboardingPage {
             description: "Lock your financial data with Face ID or Touch ID. Your privacy is our priority - all data stays on your device.",
             isProPage: false
         ),
-        // ✅ NEW: Pro Promo Page
+        // Pro Promo Page
         OnboardingPage(
             title: "Unlock Full Potential",
-            subtitle: "Get ExpenseTracker Pro",
+            subtitle: "Get PennyFlow Pro",
             imageName: "star.circle.fill",
             imageColor: .orange,
             description: "One-time purchase, lifetime access to all premium features.",

@@ -136,7 +136,7 @@ struct SettingsView: View {
     private var supportSection: some View {
         Section {
             // Send Feedback
-            Link(destination: URL(string: "mailto:zangl.manuel@gmail.com?subject=ExpenseTracker Feedback")!) {
+            Link(destination: URL(string: "mailto:zangl.manuel@gmail.com?subject=PennyFlow Feedback")!) {
                 HStack {
                     Label("Send Feedback", systemImage: "envelope.fill")
                     Spacer()
@@ -159,7 +159,7 @@ struct SettingsView: View {
         } header: {
             Label("Support", systemImage: "heart.fill")
         } footer: {
-            Text("Have feedback or want to support development? We'd love to hear from you!")
+            Text("Have feedback or want to support PennyFlow? We'd love to hear from you!")
         }
     }
     
@@ -228,7 +228,7 @@ struct SettingsView: View {
         } header: {
             Label("About", systemImage: "info.circle.fill")
         } footer: {
-            Text("Built with SwiftUI & SwiftData\n© 2026 ExpenseTracker")
+            Text("Built with SwiftUI & SwiftData\n© 2026 PennyFlow")
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 8)

@@ -1,6 +1,6 @@
 //
 //  ExportManager.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 03.01.26.
 //
@@ -29,7 +29,7 @@ class ExportManager {
             csvString += "\(date),\(title),\(category),\(type),\(amount),\(notes)\n"
         }
         
-        let fileName = "ExpenseTracker_\(Date().ISO8601Format()).csv"
+        let fileName = "PennyFlow_\(Date().ISO8601Format()).csv"
         let path = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         
         do {
@@ -50,8 +50,8 @@ class ExportManager {
         balance: Double
     ) -> URL? {
         let pdfMetaData = [
-            kCGPDFContextCreator: "Expense Tracker",
-            kCGPDFContextAuthor: "Expense Tracker App",
+            kCGPDFContextCreator: "PennyFlow",
+            kCGPDFContextAuthor: "PennyFlow App",
             kCGPDFContextTitle: "Financial Report"
         ]
         let format = UIGraphicsPDFRendererFormat()
@@ -125,7 +125,7 @@ class ExportManager {
             }
         }
         
-        let fileName = "FinancialReport_\(Date().ISO8601Format()).pdf"
+        let fileName = "PennyFlowReport_\(Date().ISO8601Format()).pdf"
         let path = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         
         do {

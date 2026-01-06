@@ -1,10 +1,9 @@
 //
 //  TransactionRowView.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 30.12.25.
 //
-
 
 import SwiftUI
 
@@ -14,6 +13,7 @@ struct TransactionRowView: View {
     
     var body: some View {
         HStack(spacing: 12) {
+            // Icon
             Image(systemName: transaction.category.systemImage)
                 .font(.title2)
                 .foregroundStyle(.white)
@@ -34,30 +34,40 @@ struct TransactionRowView: View {
                     }
                 }
             
+            // Content
             VStack(alignment: .leading, spacing: 4) {
+                // Title
                 Text(transaction.title)
                     .font(.headline)
                 
-                HStack {
+                // Category + Tags (Inline, subtle)
+                HStack(spacing: 6) {
                     Text(transaction.category.rawValue)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     
-                    if let notes = transaction.notes, !notes.isEmpty {
+                    // Show tags inline (text only, no chips)
+                    if !transaction.tags.isEmpty {
                         Text("·")
                             .foregroundStyle(.secondary)
-                        Text(notes)
+                        
+                        Text(transaction.tags.prefix(2).map { "#\($0)" }.joined(separator: "   "))
                             .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
+                            .foregroundStyle(.orange.opacity(0.7))
+                        
+                        if transaction.tags.count > 2 {
+                            Text("+\(transaction.tags.count - 2)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
             }
             
             Spacer()
             
+            // Amount + Date
             VStack(alignment: .trailing, spacing: 4) {
-                // ✅ FIXED: String interpolation instead of concatenation
                 Text("\(transaction.type == .income ? "+" : "-")\(transaction.amount.asCurrency())")
                     .font(.headline)
                     .foregroundStyle(transaction.type == .income ? Color.income : Color.expense)
@@ -80,21 +90,32 @@ struct TransactionRowView: View {
 
 #Preview {
     List {
-        TransactionRowView(transaction: .preview)
+        TransactionRowView(transaction: Transaction(
+            title: "Kebab",
+            amount: 5.00,
+            date: Date.now,
+            category: .food,
+            type: .expense,
+            notes: "Lunch #food #nice",
+            isRecurring: false
+        ))
+        
+        TransactionRowView(transaction: Transaction(
+            title: "Groceries",
+            amount: 45.99,
+            date: Date.now,
+            category: .food,
+            type: .expense,
+            notes: "Shopping #weekly #food #essentials",
+            isRecurring: false
+        ))
+        
         TransactionRowView(transaction: Transaction(
             title: "Salary",
             amount: 3000.00,
             date: Date.now,
             category: .other,
-            type: .income,  // ✅ Added Income preview
-            isRecurring: true
-        ))
-        TransactionRowView(transaction: Transaction(
-            title: "Netflix",
-            amount: 15.99,
-            date: Date.now,
-            category: .entertainment,
-            type: .expense,
+            type: .income,
             isRecurring: true
         ))
     }

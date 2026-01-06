@@ -1,6 +1,6 @@
 //
 //  BiometricLockView.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 04.01.26.
 //
@@ -34,7 +34,7 @@ struct BiometricLockView: View {
                 
                 // Title
                 VStack(spacing: 8) {
-                    Text("ExpenseTracker")
+                    Text("PennyFlow")
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundStyle(.white)

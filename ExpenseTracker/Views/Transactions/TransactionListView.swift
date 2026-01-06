@@ -1,6 +1,6 @@
 //
-//  TransactionListView.swift 
-//  ExpenseTracker
+//  TransactionListView.swift
+//  PennyFlow
 //
 
 import SwiftUI
@@ -21,11 +21,14 @@ struct TransactionListView: View {
     private var filteredTransactions: [Transaction] {
         var result = allTransactions
         
-        // Search (Title + Notes)
+        // Search (Title + Notes + Tags)
         if !filters.searchText.isEmpty {
             result = result.filter { transaction in
                 transaction.title.localizedCaseInsensitiveContains(filters.searchText) ||
-                (transaction.notes?.localizedCaseInsensitiveContains(filters.searchText) ?? false)
+                (transaction.notes?.localizedCaseInsensitiveContains(filters.searchText) ?? false) ||
+                transaction.tags.contains { tag in
+                    tag.localizedCaseInsensitiveContains(filters.searchText.replacingOccurrences(of: "#", with: ""))
+                }
             }
         }
         
@@ -284,8 +287,8 @@ struct FilterChip: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(Color.orange.opacity(0.15)) // ✅ FIXED: .orange instead of .brandOrange
-        .foregroundStyle(.orange) // ✅ FIXED
+        .background(Color.orange.opacity(0.15))
+        .foregroundStyle(.orange)
         .clipShape(Capsule())
     }
 }

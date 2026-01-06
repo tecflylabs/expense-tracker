@@ -1,6 +1,6 @@
 //
 //  ProOnboardingPageView.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 06.01.26.
 //
@@ -32,7 +32,7 @@ struct ProOnboardingPageView: View {
                     .offset(y: appeared ? 0 : 30)
                     .animation(.spring(duration: 0.8).delay(0.3), value: appeared)
                 
-                Text("Get ExpenseTracker Pro")
+                Text("Get PennyFlow Pro")
                     .font(.title3)
                     .foregroundStyle(.secondary)
                     .opacity(appeared ? 1 : 0)

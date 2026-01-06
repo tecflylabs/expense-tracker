@@ -18,6 +18,12 @@ final class Transaction {
     var notes: String?
     var isRecurring: Bool
     
+    var tags: [String] {
+        guard let notes = notes else { return [] }
+        return extractTags(from: notes)
+    }
+    
+    
     init(title: String, amount: Double, date: Date, category: Category, type: TransactionType, notes: String? = nil, isRecurring: Bool = false) {
         self.title = title
         self.amount = amount
@@ -27,4 +33,32 @@ final class Transaction {
         self.notes = notes
         self.isRecurring = isRecurring
     }
+    
+    private func extractTags(from text: String) -> [String] {
+        let pattern = "#[a-zA-Z0-9_]+"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
+        
+        let range = NSRange(text.startIndex..., in: text)
+        let matches = regex.matches(in: text, range: range)
+        
+        return matches.compactMap { match in
+            guard let range = Range(match.range, in: text) else { return nil }
+            let tag = String(text[range])
+            return tag.dropFirst().lowercased() // Remove # and lowercase
+        }
+    }
 }
+
+
+//extension Transaction {
+//    static var preview: Transaction {
+//        Transaction(
+//            title: "Grocery Shopping",
+//            amount: 45.99,
+//            date: Date.now,
+//            category: .food,
+//            type: .expense,
+//            notes: "Weekly groceries #weekly #essentials"  // ✅ Example with tags
+//        )
+//    }
+//}
