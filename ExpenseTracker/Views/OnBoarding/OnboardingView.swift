@@ -12,7 +12,6 @@ struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var currentPage = 0
-    @State private var showPaywall = false  // ✅ NEW: For "Upgrade Now" button
     
     private let pages = OnboardingPage.pages
     
@@ -25,7 +24,7 @@ struct OnboardingView: View {
                     currentPage == 0 ? Color.blue.opacity(0.1) :
                         currentPage == 1 ? Color.orange.opacity(0.1) :
                         currentPage == 2 ? Color.green.opacity(0.1) :
-                        Color.orange.opacity(0.15)  // ✅ Page 4 (Pro)
+                        Color.orange.opacity(0.15)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -54,7 +53,6 @@ struct OnboardingView: View {
                 // Page content
                 TabView(selection: $currentPage) {
                     ForEach(Array(pages.enumerated()), id: \.element.id) { index, page in
-                        // ✅ CHANGED: Different view for Pro page
                         if page.isProPage {
                             ProOnboardingPageView()
                                 .tag(index)
@@ -81,21 +79,7 @@ struct OnboardingView: View {
                 // Bottom buttons
                 VStack(spacing: 16) {
                     if currentPage == pages.count - 1 {
-                        // ✅ Pro page buttons
-                        Button {
-                            showPaywall = true
-                            HapticManager.shared.impact(style: .medium)
-                        } label: {
-                            Text("Upgrade Now")
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.brandOrange.gradient)
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
-                        }
-                        .padding(.horizontal, 40)
-                        
+                        // Pro page - only "Maybe Later" button
                         Button {
                             completeOnboarding()
                         } label: {
@@ -106,7 +90,7 @@ struct OnboardingView: View {
                         .padding(.bottom, 20)
                         
                     } else if currentPage == pages.count - 2 {
-                        // ✅ Last regular page (before Pro)
+                        // Last regular page (before Pro)
                         Button {
                             withAnimation {
                                 currentPage += 1
@@ -155,12 +139,6 @@ struct OnboardingView: View {
             }
         }
         .interactiveDismissDisabled()
-        .sheet(isPresented: $showPaywall) {
-            // ✅ Placeholder for PaywallView (we'll build this next)
-            Text("PaywallView Coming Soon")
-                .font(.title)
-                .presentationDetents([.large])
-        }
     }
     
     private func completeOnboarding() {

@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct ProOnboardingPageView: View {
+    @Environment(PurchaseManager.self) private var purchaseManager
     @State private var appeared = false
     @State private var showPaywall = false
     
@@ -50,9 +52,16 @@ struct ProOnboardingPageView: View {
             .padding(.horizontal, 50)
             
             VStack(spacing: 8) {
-                Text("Just €4.99")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundStyle(.orange)
+                if let product = purchaseManager.product {
+                    Text("Just \(product.displayPrice)")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundStyle(.orange)
+                } else {
+                    Text("Just €4.99")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundStyle(.orange)
+                        .redacted(reason: .placeholder)
+                }
                 
                 Text("One-time payment • Lifetime access")
                     .font(.subheadline)
@@ -118,4 +127,5 @@ private struct ProFeatureRowOnboarding: View {
 
 #Preview {
     ProOnboardingPageView()
+        .environment(PurchaseManager.shared)
 }

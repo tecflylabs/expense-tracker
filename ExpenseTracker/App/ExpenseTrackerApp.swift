@@ -15,6 +15,7 @@ struct ExpenseTrackerApp: App {
     
     @State private var showLockScreen = false
     @State private var showOnboarding = false
+    @State private var purchaseManager = PurchaseManager.shared  // ✅ NEW
     
     private let authManager = BiometricAuthManager.shared
     
@@ -61,6 +62,7 @@ struct ExpenseTrackerApp: App {
             }
             .fullScreenCover(isPresented: $showOnboarding) {
                 OnboardingView()
+                    .environment(purchaseManager)  // ✅ NEW
             }
             // ✅ NEW: When onboarding completes, check if we need lock
             .onChange(of: hasCompletedOnboarding) { oldValue, newValue in
@@ -73,6 +75,7 @@ struct ExpenseTrackerApp: App {
             }
         }
         .modelContainer(sharedModelContainer())
+        .environment(purchaseManager)  // ✅ NEW - Global injection
     }
     
     // MARK: - Lifecycle Observers

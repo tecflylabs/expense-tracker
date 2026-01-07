@@ -24,6 +24,11 @@ class PurchaseManager {
         purchasedProductIDs.contains(proProductID)
     }
     
+    // ✅ NEW: Single product accessor for easy access
+    var product: Product? {
+        products.first(where: { $0.id == proProductID })
+    }
+    
     private init() {
         Task {
             await loadProducts()
@@ -34,6 +39,7 @@ class PurchaseManager {
     func loadProducts() async {
         do {
             products = try await Product.products(for: [proProductID])
+            print("✅ Loaded \(products.count) product(s)")
         } catch {
             print("❌ Failed to load products: \(error)")
         }
