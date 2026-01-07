@@ -11,46 +11,73 @@ import SwiftData
 struct InsightsView: View {
     @Query private var transactions: [Transaction]
     @State private var chartsViewModel = ChartsViewModel()
-    
-    private var calculator: StatisticsCalculator {
-        // ✨ Safe: Nur wenn transactions existiert
-        guard !transactions.isEmpty else {
-            return StatisticsCalculator(transactions: [])
-        }
-        return StatisticsCalculator(transactions: transactions)
-    }
-
+    @State private var calculator: StatisticsCalculator? = nil
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                if !transactions.isEmpty {
+                if transactions.isEmpty {
+                    emptyState
+                } else if let calculator {
                     VStack(spacing: 24) {
-                        // Statistics Section
-                        statisticsSection
-                        
-                        // Charts Section
+                        statisticsSection(calculator: calculator)
                         chartsSection
                     }
                     .padding()
                 } else {
-                    emptyState
+                    // Erste Berechnung läuft noch
+                    VStack {
+                        ProgressView()
+                            .padding(.top, 40)
+                        Text("Calculating insights…")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding()
                 }
             }
             .navigationTitle("Insights")
             .navigationBarTitleDisplayMode(.large)
-            .onChange(of: transactions.count) { oldValue, newValue in
-                chartsViewModel.transactions = transactions
+            .onChange(of: transactions) { _, _ in
+                recalcAll()
             }
             .onAppear {
-                chartsViewModel.transactions = transactions
+                recalcAll()
+            }
+        }
+    }
+    
+    // MARK: - Recalculation
+    
+    private func recalcAll() {
+        let current = transactions
+        
+        // Wenn keine Transaktionen: alles leeren und fertig
+        guard !current.isEmpty else {
+            chartsViewModel.reset()
+            calculator = StatisticsCalculator(transactions: [])
+            return
+        }
+        
+        // Charts: synchron setzen, ViewModel rechnet intern async
+        chartsViewModel.transactions = current
+        
+        // Statistiken: im Hintergrund berechnen
+        DispatchQueue.global(qos: .userInitiated).async {
+            let calc = StatisticsCalculator(transactions: current)
+            DispatchQueue.main.async {
+                // Nur setzen, wenn sich die Basisdaten nicht geändert haben
+                if current == self.transactions {
+                    self.calculator = calc
+                }
             }
         }
     }
     
     // MARK: - Statistics Section
     
-    private var statisticsSection: some View {
+    private func statisticsSection(calculator: StatisticsCalculator) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Statistics")
                 .font(.title2.bold())
@@ -71,7 +98,12 @@ struct InsightsView: View {
                     value: calculator.totalIncome.asCurrency(),
                     icon: "arrow.down.circle.fill",
                     iconColor: .green,
-                    trend: calculator.incomeTrend.map { TrendIndicator(text: "\(String(format: "%.1f", abs($0)))%", isPositive: $0 >= 0) }
+                    trend: calculator.incomeTrend.map {
+                        TrendIndicator(
+                            text: "\(String(format: "%.1f", abs($0)))%",
+                            isPositive: $0 >= 0
+                        )
+                    }
                 )
                 
                 // Expenses
@@ -80,7 +112,12 @@ struct InsightsView: View {
                     value: calculator.totalExpenses.asCurrency(),
                     icon: "arrow.up.circle.fill",
                     iconColor: .red,
-                    trend: calculator.expenseTrend.map { TrendIndicator(text: "\(String(format: "%.1f", abs($0)))%", isPositive: $0 < 0) }
+                    trend: calculator.expenseTrend.map {
+                        TrendIndicator(
+                            text: "\(String(format: "%.1f", abs($0)))%",
+                            isPositive: $0 < 0   // Weniger Ausgaben = positiv
+                        )
+                    }
                 )
                 
                 // Daily Average
@@ -145,11 +182,8 @@ struct InsightsView: View {
             if chartsViewModel.hasData {
                 VStack(spacing: 20) {
                     BalanceLineChartView( data: chartsViewModel.balanceOverTimeData)
-                    
                     CategoryBarChartView( data: chartsViewModel.categoryChartData)
-                    
                     CategoryPieChartView( data: chartsViewModel.categoryChartData)
-                    
                     MonthlyComparisonChartView( data: chartsViewModel.monthlyChartData)
                 }
             }
