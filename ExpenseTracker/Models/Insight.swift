@@ -54,3 +54,7 @@ struct Insight: Identifiable, Hashable {
     }
     .padding()
 }
+
+
+
+

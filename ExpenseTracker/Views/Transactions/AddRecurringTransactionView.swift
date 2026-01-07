@@ -22,6 +22,7 @@ struct AddRecurringTransactionView: View {
     @State private var startDate = Date()
     @State private var notes = ""
     @State private var showValidationError = false
+    @State private var showPaywall = false
     
     init(recurringToEdit: RecurringTransaction? = nil) {
         self.recurringToEdit = recurringToEdit
@@ -64,6 +65,9 @@ struct AddRecurringTransactionView: View {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text("Please fill in all required fields with valid values.")
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallSheet(feature: "Recurring Transactions")
             }
         }
     }
@@ -135,6 +139,12 @@ struct AddRecurringTransactionView: View {
     // MARK: - Methods
     
     private func saveRecurring() {
+        // Pro Check (nur bei neuen, Edit erlaubt)
+        if recurringToEdit == nil && !PurchaseManager.shared.hasPro {
+            showPaywall = true
+            return
+        }
+        
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty,
               let amountValue = Double(amount.replacingOccurrences(of: ",", with: ".")),
               amountValue > 0 else {

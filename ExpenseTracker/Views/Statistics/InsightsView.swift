@@ -19,10 +19,19 @@ struct InsightsView: View {
     @State private var calculator: StatisticsCalculator? = nil
     
     @State private var insights: [Insight] = []
+    @State private var allInsights: [Insight] = []
     @State private var isLoadingInsights = false
+    @State private var showPaywall = false
     
-    // Free limit (später via IAP gating)
     private let freeInsightLimit = 3
+    
+    private var displayedInsights: [Insight] {
+        PurchaseManager.shared.hasPro ? allInsights : Array(allInsights.prefix(freeInsightLimit))
+    }
+    
+    private var hasMoreInsights: Bool {
+        !PurchaseManager.shared.hasPro && allInsights.count > freeInsightLimit
+    }
     
     var body: some View {
         NavigationStack {
@@ -52,6 +61,9 @@ struct InsightsView: View {
             .onAppear {
                 recalcAll()
             }
+            .sheet(isPresented: $showPaywall) {
+                PaywallSheet(feature: "Unlimited Insights")
+            }
         }
     }
     
@@ -63,7 +75,7 @@ struct InsightsView: View {
         guard !current.isEmpty else {
             chartsViewModel.reset()
             calculator = StatisticsCalculator(transactions: [])
-            insights = []
+            allInsights = []
             return
         }
         
@@ -86,7 +98,7 @@ struct InsightsView: View {
         let currentBudgets = budgets
         
         guard !currentTx.isEmpty else {
-            insights = []
+            allInsights = []
             return
         }
         
@@ -95,12 +107,10 @@ struct InsightsView: View {
         DispatchQueue.global(qos: .userInitiated).async {
             let generator = InsightGenerator(transactions: currentTx, budgets: currentBudgets)
             let all = generator.generate()
-            let limited = Array(all.prefix(self.freeInsightLimit))
             
             DispatchQueue.main.async {
-                // same-data guard
                 if currentTx == self.transactions {
-                    self.insights = limited
+                    self.allInsights = all
                 }
                 self.isLoadingInsights = false
             }
@@ -122,7 +132,7 @@ struct InsightsView: View {
                 }
             }
             
-            if insights.isEmpty, !isLoadingInsights {
+            if displayedInsights.isEmpty, !isLoadingInsights {
                 ContentUnavailableView(
                     "No insights yet",
                     systemImage: "sparkles",
@@ -131,8 +141,28 @@ struct InsightsView: View {
                 .frame(maxWidth: .infinity)
             } else {
                 VStack(spacing: 10) {
-                    ForEach(insights) { insight in
+                    ForEach(displayedInsights) { insight in
                         InsightRowView(insight: insight)
+                    }
+                    
+                    if hasMoreInsights {
+                        Button {
+                            showPaywall = true
+                            HapticManager.shared.impact(style: .medium)
+                        } label: {
+                            HStack {
+                                Image(systemName: "lock.fill")
+                                Text("Unlock \(allInsights.count - freeInsightLimit) more insights")
+                                    .fontWeight(.semibold)
+                                Image(systemName: "crown.fill")
+                                    .foregroundStyle(.yellow)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.orange.opacity(0.1))
+                            .foregroundStyle(.orange)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
                     }
                 }
             }
@@ -253,4 +283,3 @@ struct InsightsView: View {
     InsightsView()
         .modelContainer(previewContainer())
 }
-

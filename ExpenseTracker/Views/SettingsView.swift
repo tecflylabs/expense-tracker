@@ -10,6 +10,8 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.openURL) private var openURL
+    
     @Query private var transactions: [Transaction]
     
     @AppStorage("selectedTheme") private var selectedThemeRaw: String = AppTheme.system.rawValue
@@ -21,19 +23,39 @@ struct SettingsView: View {
     
     private let authManager = BiometricAuthManager.shared
     
+    // MARK: - URLs
+    private let supportEmail = "zangl.manuel@gmail.com"
+    private let githubPagesBaseURL = "https://hurricane005.github.io/expense-tracker"
+    private let githubRepoURL = "https://github.com/Hurricane005/expense-tracker"
+    
+    private var privacyPolicyURL: URL? {
+        URL(string: "\(githubPagesBaseURL)/privacy.html")
+    }
+    
+    private var supportURL: URL? {
+        URL(string: "\(githubPagesBaseURL)/support.html")
+    }
+    
+    private var mailtoURL: URL? {
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = supportEmail
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: "PennyFlow Support"),
+        ]
+        return components.url
+    }
+    
     private var selectedTheme: AppTheme {
-        get {
-            AppTheme(rawValue: selectedThemeRaw) ?? .system
-        }
-        nonmutating set {
-            selectedThemeRaw = newValue.rawValue
-        }
+        get { AppTheme(rawValue: selectedThemeRaw) ?? .system }
+        nonmutating set { selectedThemeRaw = newValue.rawValue }
     }
     
     @State private var showDeleteAlert = false
     @State private var exportFileURL: URL?
     @State private var showShareSheet = false
     @State private var isExporting = false
+    @State private var showPaywallSheet = false
     
     private var totalIncome: Double {
         transactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
@@ -53,6 +75,9 @@ struct SettingsView: View {
                 if authManager.isBiometricAvailable {
                     securitySection
                 }
+                
+                proStatusSection
+                
                 Section("Currency") {
                     Picker("Currency", selection: $currencyCode) {
                         ForEach(supportedCurrencies, id: \.self) { code in
@@ -60,19 +85,20 @@ struct SettingsView: View {
                         }
                     }
                 }
+                
                 appearanceSection
-                supportSection  
                 exportSection
                 dataSection
+                supportSection
                 aboutSection
                 
 #if DEBUG
-                debugSection
+                //                debugSection
 #endif
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
-            .tint(.brandOrange)  // ✅ Global orange tint
+            .tint(.brandOrange)
             .alert("Delete All Data", isPresented: $showDeleteAlert) {
                 Button("Cancel", role: .cancel) { }
                 Button("Delete", role: .destructive) {
@@ -85,6 +111,9 @@ struct SettingsView: View {
                 if let url = exportFileURL {
                     ShareSheet(items: [url])
                 }
+            }
+            .sheet(isPresented: $showPaywallSheet) {
+                PaywallSheet(feature: "Pro Features")
             }
             .overlay {
                 if isExporting {
@@ -118,6 +147,36 @@ struct SettingsView: View {
         }
     }
     
+    // MARK: - Pro Status Section
+    
+    private var proStatusSection: some View {
+        Section {
+            if PurchaseManager.shared.hasPro {
+                Label("Pro Version Active", systemImage: "checkmark.seal.fill")
+                    .foregroundStyle(.green)
+            } else {
+                Button {
+                    showPaywallSheet = true
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Unlock Pro Features")
+                                .font(.headline)
+                            Text("Lifetime access for just €4.99")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "crown.fill")
+                            .foregroundStyle(.yellow)
+                    }
+                }
+            }
+        } header: {
+            Label("Pro Features", systemImage: "star.fill")
+        }
+    }
+    
     // MARK: - Appearance Section
     
     private var appearanceSection: some View {
@@ -141,37 +200,71 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Support Section (Combined)
+    // MARK: - Support Section
     
     private var supportSection: some View {
         Section {
-            // Send Feedback
-            Link(destination: URL(string: "mailto:zangl.manuel@gmail.com?subject=PennyFlow Feedback")!) {
+            Button {
+                if let supportURL {
+                    openURL(supportURL)
+                } else if let mailtoURL {
+                    openURL(mailtoURL)
+                }
+            } label: {
                 HStack {
-                    Label("Send Feedback", systemImage: "envelope.fill")
+                    Label("Contact Developer", systemImage: "envelope.fill")
                     Spacer()
                     Image(systemName: "arrow.up.right")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+            }.tint(.primary)
+            
+            
+            if let supportURL {
+                Link(destination: supportURL) {
+                    HStack {
+                        Label("Support Website", systemImage: "questionmark.circle.fill")
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }.tint(.primary)
+            } else {
+                HStack {
+                    Label("Support Website", systemImage: "questionmark.circle.fill")
+                    Spacer()
+                    Text("Coming soon")
+                        .foregroundStyle(.secondary)
+                }.tint(.primary)
             }
             
-            // Buy Me a Coffee
-            Link(destination: URL(string: "https://buymeacoffee.com/yourname")!) {
+            if let privacyPolicyURL {
+                Link(destination: privacyPolicyURL) {
+                    HStack {
+                        Label("Privacy Policy", systemImage: "hand.raised.fill")
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }.tint(.primary)
+            } else {
                 HStack {
-                    Label("Buy Me a Coffee", systemImage: "cup.and.saucer.fill")
+                    Label("Privacy Policy", systemImage: "hand.raised.fill")
                     Spacer()
-                    Image(systemName: "arrow.up.right")
-                        .font(.caption)
+                    Text("Coming soon")
                         .foregroundStyle(.secondary)
-                }
+                }.tint(.primary)
             }
         } header: {
             Label("Support", systemImage: "heart.fill")
         } footer: {
-            Text("Have feedback or want to support PennyFlow? We'd love to hear from you!")
+            Text("Questions or feedback? Use Contact Developer or visit the support site.")
         }
     }
+    
     
     // MARK: - Export Section
     
@@ -181,6 +274,7 @@ struct SettingsView: View {
                 exportAsCSV()
             } label: {
                 Label("Export as CSV", systemImage: "tablecells")
+                    .tint(.primary)
             }
             .disabled(transactions.isEmpty)
             
@@ -188,6 +282,7 @@ struct SettingsView: View {
                 exportAsPDF()
             } label: {
                 Label("Export as PDF", systemImage: "doc.text")
+                    .tint(.primary)
             }
             .disabled(transactions.isEmpty)
         } header: {
@@ -226,7 +321,7 @@ struct SettingsView: View {
             LabeledContent("Version", value: "1.0.0")
             LabeledContent("Build", value: "1")
             
-            Link(destination: URL(string: "https://github.com/yourusername")!) {
+            Link(destination: URL(string: githubRepoURL)!) {
                 HStack {
                     Label("GitHub Repository", systemImage: "link")
                     Spacer()
@@ -284,6 +379,11 @@ struct SettingsView: View {
     }
     
     private func exportAsPDF() {
+        guard PurchaseManager.shared.hasPro else {
+            showPaywallSheet = true
+            return
+        }
+        
         isExporting = true
         
         DispatchQueue.global(qos: .userInitiated).async {
@@ -320,6 +420,3 @@ struct SettingsView: View {
     SettingsView()
         .modelContainer(previewContainer())
 }
-
-
-

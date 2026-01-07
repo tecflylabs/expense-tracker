@@ -9,21 +9,20 @@ import SwiftUI
 
 struct ProOnboardingPageView: View {
     @State private var appeared = false
+    @State private var showPaywall = false
     
     var body: some View {
         VStack(spacing: 30) {
             Spacer()
             
-            // Star Icon
-            Image(systemName: "star.circle.fill")
+            Image(systemName: "crown.fill")
                 .font(.system(size: 100))
-                .foregroundStyle(.orange.gradient)
+                .foregroundStyle(.yellow.gradient)
                 .symbolEffect(.bounce, value: appeared)
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared ? 0 : 50)
                 .animation(.spring(duration: 0.8, bounce: 0.4).delay(0.2), value: appeared)
             
-            // Title
             VStack(spacing: 12) {
                 Text("Unlock Full Potential")
                     .font(.system(size: 32, weight: .bold))
@@ -41,17 +40,15 @@ struct ProOnboardingPageView: View {
             }
             .padding(.horizontal, 40)
             
-            // Features List
             VStack(alignment: .leading, spacing: 16) {
-                FeatureRow(icon: "chart.bar.fill", text: "Unlimited Budget Goals", delay: 0.5)
-                FeatureRow(icon: "chart.xyaxis.line", text: "Advanced Charts & Reports", delay: 0.6)
-                FeatureRow(icon: "doc.fill", text: "PDF Export", delay: 0.7)
-                FeatureRow(icon: "square.grid.3x3.fill", text: "All Widget Sizes", delay: 0.8)
-                FeatureRow(icon: "slider.horizontal.3", text: "Advanced Filters", delay: 0.9)
+                ProFeatureRowOnboarding(icon: "photo.fill", text: "Photo Attachments", delay: 0.5)
+                ProFeatureRowOnboarding(icon: "arrow.clockwise", text: "Recurring Transactions", delay: 0.6)
+                ProFeatureRowOnboarding(icon: "doc.fill", text: "PDF Export", delay: 0.7)
+                ProFeatureRowOnboarding(icon: "sparkles", text: "Unlimited Insights", delay: 0.8)
+                ProFeatureRowOnboarding(icon: "target", text: "Unlimited Budget Goals", delay: 0.9)
             }
             .padding(.horizontal, 50)
             
-            // Price
             VStack(spacing: 8) {
                 Text("Just €4.99")
                     .font(.system(size: 28, weight: .bold))
@@ -66,17 +63,35 @@ struct ProOnboardingPageView: View {
             .animation(.spring(duration: 0.8).delay(1.0), value: appeared)
             .padding(.top, 10)
             
+            Button {
+                showPaywall = true
+                HapticManager.shared.impact(style: .medium)
+            } label: {
+                Text("Get Pro Now")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.orange.gradient)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+            .padding(.horizontal, 40)
+            .opacity(appeared ? 1 : 0)
+            .offset(y: appeared ? 0 : 20)
+            .animation(.spring(duration: 0.8).delay(1.1), value: appeared)
+            
             Spacer()
         }
         .onAppear {
             appeared = true
         }
+        .sheet(isPresented: $showPaywall) {
+            PaywallSheet(feature: "Unlock all Pro features")
+        }
     }
 }
 
-// MARK: - Feature Row Component
-
-struct FeatureRow: View {
+private struct ProFeatureRowOnboarding: View {
     let icon: String
     let text: String
     let delay: Double

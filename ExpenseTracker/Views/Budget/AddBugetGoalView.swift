@@ -12,8 +12,13 @@ struct AddBudgetGoalView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
+    @Query private var existingBudgets: [BudgetGoal]
+    
     @State private var selectedCategory: Category = .food
     @State private var monthlyLimit: String = ""
+    @State private var showPaywall = false
+    
+    private let freeBudgetLimit = 1
     
     var body: some View {
         NavigationStack {
@@ -42,6 +47,18 @@ struct AddBudgetGoalView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                
+                if !PurchaseManager.shared.hasPro && existingBudgets.count >= freeBudgetLimit {
+                    Section {
+                        HStack {
+                            Image(systemName: "crown.fill")
+                                .foregroundStyle(.yellow)
+                            Text("Upgrade to Pro for unlimited budget goals")
+                                .font(.caption)
+                        }
+                        .foregroundStyle(.orange)
+                    }
+                }
             }
             .navigationTitle("New Budget Goal")
             .navigationBarTitleDisplayMode(.inline)
@@ -59,6 +76,9 @@ struct AddBudgetGoalView: View {
                     .disabled(!isValid)
                 }
             }
+            .sheet(isPresented: $showPaywall) {
+                PaywallSheet(feature: "Unlimited Budget Goals")
+            }
         }
     }
     
@@ -70,6 +90,12 @@ struct AddBudgetGoalView: View {
     }
     
     private func saveBudgetGoal() {
+        // Pro Check
+        if !PurchaseManager.shared.hasPro && existingBudgets.count >= freeBudgetLimit {
+            showPaywall = true
+            return
+        }
+        
         guard let amount = Double(monthlyLimit) else { return }
         
         let newBudget = BudgetGoal(

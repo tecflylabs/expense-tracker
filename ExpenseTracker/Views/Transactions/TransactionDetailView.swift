@@ -24,6 +24,7 @@ struct TransactionDetailView: View {
     
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
+    @State private var showPaywallSheet = false
     
     var body: some View {
         List {
@@ -51,7 +52,9 @@ struct TransactionDetailView: View {
         .sheet(item: $attachmentToPreview) { attachment in
             AttachmentPreviewView(url: AttachmentStore.resolveURL(relativePath: attachment.relativePath))
         }
-        // Delete attachment bound to the selected attachment (fixes multi-tap delete)
+        .sheet(isPresented: $showPaywallSheet) {
+            PaywallSheet(feature: "Photo Attachments")
+        }
         .alert(item: $attachmentToDelete) { attachment in
             Alert(
                 title: Text("Delete Attachment"),
@@ -148,7 +151,14 @@ struct TransactionDetailView: View {
             }
             .onChange(of: selectedPhotoItem) { _, newItem in
                 guard let newItem else { return }
-                Task { await addAttachment(from: newItem) }
+                
+                // Pro Check
+                if PurchaseManager.shared.hasPro {
+                    Task { await addAttachment(from: newItem) }
+                } else {
+                    showPaywallSheet = true
+                    selectedPhotoItem = nil
+                }
             }
             
             if transaction.attachments.isEmpty {
@@ -182,7 +192,6 @@ struct TransactionDetailView: View {
                         }
                     }
                     .contentShape(Rectangle())
-
                 }
             }
         }
@@ -203,7 +212,6 @@ struct TransactionDetailView: View {
     
     @MainActor
     private func addAttachment(from item: PhotosPickerItem) async {
-        // Important: reset selection so picking again triggers onChange
         defer { selectedPhotoItem = nil }
         
         do {
@@ -241,7 +249,6 @@ struct TransactionDetailView: View {
     }
     
     private func deleteTransaction() {
-        // Optional but recommended: remove files too (SwiftData cascade won't delete files)
         for attachment in transaction.attachments {
             try? AttachmentStore.deleteFile(relativePath: attachment.relativePath)
         }

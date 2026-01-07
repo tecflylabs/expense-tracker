@@ -10,8 +10,6 @@ import Foundation
 struct InsightGenerator {
     let transactions: [Transaction]
     let budgets: [BudgetGoal]
-    
-    /// Optional: später aus Settings/AppStorage ziehen
     let currencyCode: String
     
     init(transactions: [Transaction], budgets: [BudgetGoal], currencyCode: String = "EUR") {
@@ -29,11 +27,17 @@ struct InsightGenerator {
         insights.append(contentsOf: monthOverMonthInsights())
         insights.append(contentsOf: categoryInsights())
         insights.append(contentsOf: anomalyInsights())
+        insights.append(contentsOf: streakInsights())
+        insights.append(contentsOf: savingsOpportunityInsights())
+        insights.append(contentsOf: weekendSpendingInsights())
+        insights.append(contentsOf: recurringTransactionInsights())
+        insights.append(contentsOf: incomeInsights())
+        insights.append(contentsOf: dailyAverageInsights())
+        insights.append(contentsOf: categoryComparisonInsights())
+        insights.append(contentsOf: noSpendDaysInsights())
         
-        // Sort: important first
         insights.sort { $0.priority > $1.priority }
         
-        // Dedupe: kind+title (safer than only title)
         var seen = Set<String>()
         insights = insights.filter { insight in
             let key = "\(insight.kind.rawValue)|\(insight.title)"
@@ -48,14 +52,16 @@ struct InsightGenerator {
     }
 }
 
-// MARK: - Insight building blocks
+// MARK: - Insight Building Blocks
 
 private extension InsightGenerator {
+    
+    // MARK: - Budget Insights (existing)
+    
     func budgetInsights() -> [Insight] {
         let activeBudgets = budgets.filter { $0.isActive }
         guard !activeBudgets.isEmpty else { return [] }
         
-        // Highest progress first
         let sorted = activeBudgets.sorted { a, b in
             a.progress(transactions: transactions) > b.progress(transactions: transactions)
         }
@@ -63,7 +69,7 @@ private extension InsightGenerator {
         var result: [Insight] = []
         
         for budget in sorted.prefix(2) {
-            let progress = budget.progress(transactions: transactions) // 0...1 (capped)
+            let progress = budget.progress(transactions: transactions)
             let spent = budget.currentSpent(transactions: transactions)
             let remaining = budget.remaining(transactions: transactions)
             let level = budget.warningLevel(transactions: transactions)
@@ -111,6 +117,8 @@ private extension InsightGenerator {
         return result
     }
     
+    // MARK: - Month Over Month Insights (existing)
+    
     func monthOverMonthInsights() -> [Insight] {
         let calendar = Calendar.current
         let now = Date()
@@ -143,6 +151,8 @@ private extension InsightGenerator {
         ]
     }
     
+    // MARK: - Category Insights (existing)
+    
     func categoryInsights() -> [Insight] {
         let calendar = Calendar.current
         let now = Date()
@@ -170,6 +180,8 @@ private extension InsightGenerator {
             )
         ]
     }
+    
+    // MARK: - Anomaly Insights (existing)
     
     func anomalyInsights() -> [Insight] {
         let calendar = Calendar.current
@@ -199,6 +211,311 @@ private extension InsightGenerator {
         
         return []
     }
+    
+    // MARK: - 🆕 Streak Insights
+    
+    func streakInsights() -> [Insight] {
+        let calendar = Calendar.current
+        let sortedDates = transactions
+            .map { calendar.startOfDay(for: $0.date) }
+            .sorted()
+        
+        guard !sortedDates.isEmpty else { return [] }
+        
+        var streak = 1
+        var maxStreak = 1
+        
+        for i in 1..<sortedDates.count {
+            if calendar.dateComponents([.day], from: sortedDates[i-1], to: sortedDates[i]).day == 1 {
+                streak += 1
+                maxStreak = max(maxStreak, streak)
+            } else if sortedDates[i] != sortedDates[i-1] {
+                streak = 1
+            }
+        }
+        
+        if maxStreak >= 7 {
+            return [
+                Insight(
+                    kind: .warning,
+                    title: "Long spending streak",
+                    message: "You spent money for \(maxStreak) consecutive days. Consider a no-spend day!",
+                    systemImage: "flame.fill",
+                    priority: 55
+                )
+            ]
+        }
+        
+        return []
+    }
+    
+    // MARK: - 🆕 Savings Opportunity Insights
+    
+    func savingsOpportunityInsights() -> [Insight] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let thisMonth = transactions.filter {
+            $0.type == .expense && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }
+        
+        let grouped = Dictionary(grouping: thisMonth, by: { $0.category })
+        let smallExpenses = grouped.filter { $0.value.count >= 10 }
+        
+        guard let category = smallExpenses.max(by: { $0.value.count < $1.value.count }) else { return [] }
+        
+        let total = category.value.reduce(0) { $0 + $1.amount }
+        let count = category.value.count
+        
+        if total > 50 {
+            return [
+                Insight(
+                    kind: .positive,
+                    title: "Savings opportunity",
+                    message: "You made \(count) \(category.key.rawValue) purchases totaling \(formatCurrency(total)). Reducing by 20% could save \(formatCurrency(total * 0.2))/month.",
+                    systemImage: "lightbulb.fill",
+                    priority: 45
+                )
+            ]
+        }
+        
+        return []
+    }
+    
+    // MARK: - 🆕 Weekend Spending Insights
+    
+    func weekendSpendingInsights() -> [Insight] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let thisMonth = transactions.filter {
+            $0.type == .expense && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }
+        
+        let weekendExpenses = thisMonth.filter {
+            let weekday = calendar.component(.weekday, from: $0.date)
+            return weekday == 1 || weekday == 7
+        }.reduce(0) { $0 + $1.amount }
+        
+        let weekdayExpenses = thisMonth.filter {
+            let weekday = calendar.component(.weekday, from: $0.date)
+            return weekday != 1 && weekday != 7
+        }.reduce(0) { $0 + $1.amount }
+        
+        let total = weekendExpenses + weekdayExpenses
+        guard total > 0 else { return [] }
+        
+        let weekendPct = (weekendExpenses / total) * 100
+        
+        if weekendPct >= 40 {
+            return [
+                Insight(
+                    kind: .neutral,
+                    title: "Weekend spending high",
+                    message: "\(weekendPct.rounded1())% of your spending happens on weekends (\(formatCurrency(weekendExpenses))).",
+                    systemImage: "calendar.badge.exclamationmark",
+                    priority: 40
+                )
+            ]
+        }
+        
+        return []
+    }
+    
+    // MARK: - 🆕 Recurring Transaction Insights
+    
+    func recurringTransactionInsights() -> [Insight] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let monthlyExpenses = transactions.filter {
+            $0.type == .expense &&
+            $0.isRecurring &&
+            calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }
+        
+        let recurringTotal = monthlyExpenses.reduce(0) { $0 + $1.amount }
+        guard recurringTotal > 0 else { return [] }
+        
+        let totalExpenses = transactions.filter {
+            $0.type == .expense && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }.reduce(0) { $0 + $1.amount }
+        
+        let pct = (recurringTotal / totalExpenses) * 100
+        
+        return [
+            Insight(
+                kind: .neutral,
+                title: "Recurring expenses",
+                message: "Subscriptions & recurring costs account for \(pct.rounded1())% of spending (\(formatCurrency(recurringTotal))/month).",
+                systemImage: "arrow.clockwise.circle.fill",
+                priority: 65
+            )
+        ]
+    }
+    
+    // MARK: - 🆕 Income Insights
+    
+    func incomeInsights() -> [Insight] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        guard let lastMonth = calendar.date(byAdding: .month, value: -1, to: now) else { return [] }
+        
+        let thisIncome = transactions.filter {
+            $0.type == .income && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }.reduce(0) { $0 + $1.amount }
+        
+        let prevIncome = transactions.filter {
+            $0.type == .income && calendar.isDate($0.date, equalTo: lastMonth, toGranularity: .month)
+        }.reduce(0) { $0 + $1.amount }
+        
+        guard prevIncome > 0 else { return [] }
+        
+        let diff = thisIncome - prevIncome
+        let pct = (diff / prevIncome) * 100
+        
+        if abs(pct) >= 10 {
+            let kind: Insight.Kind = diff > 0 ? .positive : .warning
+            let title = diff > 0 ? "Income increased" : "Income decreased"
+            
+            return [
+                Insight(
+                    kind: kind,
+                    title: title,
+                    message: "Your income is \(abs(pct).rounded1())% \(diff > 0 ? "higher" : "lower") than last month (\(formatCurrency(abs(diff)))).",
+                    systemImage: diff > 0 ? "arrow.up.circle.fill" : "arrow.down.circle.fill",
+                    priority: 75
+                )
+            ]
+        }
+        
+        return []
+    }
+    
+    // MARK: - 🆕 Daily Average Insights
+    
+    func dailyAverageInsights() -> [Insight] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let thisMonth = transactions.filter {
+            $0.type == .expense && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }
+        
+        let total = thisMonth.reduce(0) { $0 + $1.amount }
+        let daysInMonth = calendar.range(of: .day, in: .month, for: now)?.count ?? 30
+        let dailyAvg = total / Double(daysInMonth)
+        
+        guard dailyAvg > 0 else { return [] }
+        
+        if dailyAvg > 50 {
+            return [
+                Insight(
+                    kind: .neutral,
+                    title: "Daily spending average",
+                    message: "You're spending an average of \(formatCurrency(dailyAvg)) per day this month.",
+                    systemImage: "calendar.circle.fill",
+                    priority: 35
+                )
+            ]
+        }
+        
+        return []
+    }
+    
+    // MARK: - 🆕 Category Comparison Insights
+    
+    func categoryComparisonInsights() -> [Insight] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        guard let lastMonth = calendar.date(byAdding: .month, value: -1, to: now) else { return [] }
+        
+        let thisMonth = transactions.filter {
+            $0.type == .expense && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }
+        
+        let prevMonth = transactions.filter {
+            $0.type == .expense && calendar.isDate($0.date, equalTo: lastMonth, toGranularity: .month)
+        }
+        
+        let thisGrouped = Dictionary(grouping: thisMonth, by: { $0.category })
+            .mapValues { $0.reduce(0) { $0 + $1.amount } }
+        
+        let prevGrouped = Dictionary(grouping: prevMonth, by: { $0.category })
+            .mapValues { $0.reduce(0) { $0 + $1.amount } }
+        
+        var biggestIncrease: (category: Category, pct: Double, amount: Double)?
+        
+        for (category, thisAmount) in thisGrouped {
+            guard let prevAmount = prevGrouped[category], prevAmount > 0 else { continue }
+            
+            let diff = thisAmount - prevAmount
+            let pct = (diff / prevAmount) * 100
+            
+            if pct > 30, diff > 20 {
+                if biggestIncrease == nil || pct > biggestIncrease!.pct {
+                    biggestIncrease = (category, pct, diff)
+                }
+            }
+        }
+        
+        if let increase = biggestIncrease {
+            return [
+                Insight(
+                    kind: .warning,
+                    title: "Category spike",
+                    message: "\(increase.category.rawValue) spending increased by \(increase.pct.rounded1())% (\(formatCurrency(increase.amount)) more than last month).",
+                    systemImage: "arrow.up.right.circle.fill",
+                    priority: 68
+                )
+            ]
+        }
+        
+        return []
+    }
+    
+    // MARK: - 🆕 No-Spend Days Insights
+    
+    func noSpendDaysInsights() -> [Insight] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let thisMonth = transactions.filter {
+            $0.type == .expense && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }
+        
+        let spendDays = Set(thisMonth.map { calendar.startOfDay(for: $0.date) })
+        let daysInMonth = calendar.range(of: .day, in: .month, for: now)?.count ?? 30
+        let currentDay = calendar.component(.day, from: now)
+        
+        let noSpendDays = currentDay - spendDays.count
+        
+        if noSpendDays >= 5 {
+            return [
+                Insight(
+                    kind: .positive,
+                    title: "Great self-control!",
+                    message: "You had \(noSpendDays) no-spend days this month. Keep it up!",
+                    systemImage: "star.fill",
+                    priority: 30
+                )
+            ]
+        } else if noSpendDays == 0 && currentDay >= 10 {
+            return [
+                Insight(
+                    kind: .warning,
+                    title: "No spend-free days",
+                    message: "You've spent money every day this month. Try a no-spend day challenge!",
+                    systemImage: "calendar.badge.exclamationmark",
+                    priority: 42
+                )
+            ]
+        }
+        
+        return []
+    }
 }
 
 // MARK: - Formatting
@@ -214,7 +531,7 @@ private extension InsightGenerator {
     }
 }
 
-// MARK: - Small helpers
+// MARK: - Helpers
 
 private extension Double {
     func rounded1() -> String {
