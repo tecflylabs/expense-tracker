@@ -9,6 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct RecurringTransactionsView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     @Environment(\.modelContext) private var context
     @Query(sort: \RecurringTransaction.startDate, order: .reverse) private var recurringTransactions: [RecurringTransaction]
     
@@ -97,6 +100,7 @@ struct RecurringTransactionsView: View {
 // MARK: - Recurring Row View
 
 struct RecurringRowView: View {
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
     let recurring: RecurringTransaction
     
     var body: some View {
@@ -139,7 +143,7 @@ struct RecurringRowView: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text("\(recurring.type == .income ? "+" : "-")\(recurring.amount.asCurrency())")
+                Text("\(recurring.type == .income ? "+" : "-")\(recurring.amount.asCurrency(currencyCode: currencyCode))")
                     .font(.headline)
                     .foregroundStyle(recurring.type == .income ? .green : .red)
                 

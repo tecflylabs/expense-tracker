@@ -2,6 +2,9 @@ import SwiftUI
 import Charts
 
 struct CategoryBarChartView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     let data: [CategoryChartData]
     @State private var selectedCategory: Category?
     
@@ -18,7 +21,7 @@ struct CategoryBarChartView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(selectedData.category.rawValue)
                             .font(.caption.bold())
-                        Text(selectedData.amount.asCurrency())
+                        Text(selectedData.amount.asCurrency(currencyCode: currencyCode))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

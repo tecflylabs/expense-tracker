@@ -6,6 +6,9 @@
 import SwiftUI
 
 struct AdvancedFilterSheet: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     @Environment(\.dismiss) private var dismiss
     @Binding var filters: TransactionFilters
     
@@ -173,13 +176,13 @@ struct AdvancedFilterSheet: View {
             }
         } footer: {
             if let min = filters.minAmount, let max = filters.maxAmount {
-                Text("Showing transactions between \(min.asCurrency()) and \(max.asCurrency())")
+                Text("Showing transactions between \(min.asCurrency(currencyCode: currencyCode)) and \(max.asCurrency(currencyCode: currencyCode))")
                     .font(.caption)
             } else if let min = filters.minAmount {
-                Text("Showing transactions above \(min.asCurrency())")
+                Text("Showing transactions above \(min.asCurrency(currencyCode: currencyCode))")
                     .font(.caption)
             } else if let max = filters.maxAmount {
-                Text("Showing transactions below \(max.asCurrency())")
+                Text("Showing transactions below \(max.asCurrency(currencyCode: currencyCode))")
                     .font(.caption)
             }
         }

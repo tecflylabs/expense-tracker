@@ -22,6 +22,9 @@ struct WidgetEntry: TimelineEntry {
 // MARK: - Timeline Provider
 
 struct Provider: TimelineProvider {
+    
+    
+    
     @MainActor
     func placeholder(in context: Context) -> WidgetEntry {
         WidgetEntry(
@@ -97,6 +100,8 @@ struct Provider: TimelineProvider {
 struct SmallWidgetView: View {
     let entry: WidgetEntry
     
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -116,7 +121,7 @@ struct SmallWidgetView: View {
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.8))
                 
-                Text(entry.balance.asCurrency())
+                Text(entry.balance.asCurrency(currencyCode: currencyCode))
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
@@ -131,6 +136,9 @@ struct SmallWidgetView: View {
 // MARK: - Medium Widget (Recent Transactions)
 
 struct MediumWidgetView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     let entry: WidgetEntry
     
     var body: some View {
@@ -139,7 +147,7 @@ struct MediumWidgetView: View {
                 Label("Recent", systemImage: "clock.fill")
                     .font(.headline)
                 Spacer()
-                Text(entry.balance.asCurrency())
+                Text(entry.balance.asCurrency(currencyCode: currencyCode))
                     .font(.subheadline.bold())
                     .foregroundStyle(entry.balance >= 0 ? .green : .red)
             }
@@ -165,7 +173,7 @@ struct MediumWidgetView: View {
                         
                         Spacer()
                         
-                        Text((transaction.type == .income ? "+" : "-") + transaction.amount.asCurrency())
+                        Text((transaction.type == .income ? "+" : "-") + transaction.amount.asCurrency(currencyCode: currencyCode))
                             .font(.caption.bold())
                             .foregroundStyle(transaction.type == .income ? .green : .red)
                     }
@@ -180,6 +188,8 @@ struct MediumWidgetView: View {
 
 struct LargeWidgetView: View {
     let entry: WidgetEntry
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -198,7 +208,7 @@ struct LargeWidgetView: View {
                     Text("Balance")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(entry.balance.asCurrency())
+                    Text(entry.balance.asCurrency(currencyCode: currencyCode))
                         .font(.title2.bold())
                         .foregroundStyle(entry.balance >= 0 ? .green : .red)
                 }
@@ -214,7 +224,7 @@ struct LargeWidgetView: View {
                     Label("Income", systemImage: "arrow.down.circle.fill")
                         .font(.caption)
                         .foregroundStyle(.green)
-                    Text(entry.monthlyIncome.asCurrency())
+                    Text(entry.monthlyIncome.asCurrency(currencyCode: currencyCode))
                         .font(.subheadline.bold())
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -226,7 +236,7 @@ struct LargeWidgetView: View {
                     Label("Expense", systemImage: "arrow.up.circle.fill")
                         .font(.caption)
                         .foregroundStyle(.red)
-                    Text(entry.monthlyExpense.asCurrency())
+                    Text(entry.monthlyExpense.asCurrency(currencyCode: currencyCode))
                         .font(.subheadline.bold())
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -260,7 +270,7 @@ struct LargeWidgetView: View {
                             
                             Spacer()
                             
-                            Text((transaction.type == .income ? "+" : "-") + transaction.amount.asCurrency())
+                            Text((transaction.type == .income ? "+" : "-") + transaction.amount.asCurrency(currencyCode: currencyCode))
                                 .font(.caption2.bold())
                                 .foregroundStyle(transaction.type == .income ? .green : .red)
                         }

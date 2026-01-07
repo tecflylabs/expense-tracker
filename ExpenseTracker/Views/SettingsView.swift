@@ -15,6 +15,9 @@ struct SettingsView: View {
     @AppStorage("selectedTheme") private var selectedThemeRaw: String = AppTheme.system.rawValue
     @AppStorage("biometricLockEnabled") private var biometricLockEnabled = false
     @AppStorage("lockTimeout") private var lockTimeout = 1
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
+    private let supportedCurrencies: [String] = ["EUR", "USD", "GBP", "CHF", "JPY"]
     
     private let authManager = BiometricAuthManager.shared
     
@@ -49,6 +52,13 @@ struct SettingsView: View {
             Form {
                 if authManager.isBiometricAvailable {
                     securitySection
+                }
+                Section("Currency") {
+                    Picker("Currency", selection: $currencyCode) {
+                        ForEach(supportedCurrencies, id: \.self) { code in
+                            Text(code).tag(code)
+                        }
+                    }
                 }
                 appearanceSection
                 supportSection  

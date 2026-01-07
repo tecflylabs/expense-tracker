@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct BudgetGoalsView: View {
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     @Environment(\.modelContext) private var modelContext
     @Query private var budgets: [BudgetGoal]
     @Query private var transactions: [Transaction]
@@ -72,7 +74,7 @@ struct BudgetGoalsView: View {
                     Text("Total Monthly Budget")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(totalBudget.asCurrency())
+                    Text(totalBudget.asCurrency(currencyCode: currencyCode))
                         .font(.title2)
                         .fontWeight(.bold)
                 }
@@ -83,7 +85,7 @@ struct BudgetGoalsView: View {
                     Text("Total Spent")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(totalSpent.asCurrency())
+                    Text(totalSpent.asCurrency(currencyCode: currencyCode))
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundStyle(totalSpent > totalBudget ? .red : .primary)
@@ -102,7 +104,7 @@ struct BudgetGoalsView: View {
                 
                 Spacer()
                 
-                Text("Remaining: \(totalRemaining.asCurrency())")
+                Text("Remaining: \(totalRemaining.asCurrency(currencyCode: currencyCode))")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(totalRemaining < 0 ? .red : .secondary)

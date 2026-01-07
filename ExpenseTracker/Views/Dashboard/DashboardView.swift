@@ -16,6 +16,7 @@ struct DashboardView: View {
     @State private var showAddBudget = false
     @State private var showAllBudgets = false
     
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
     @AppStorage("selectedTheme") private var selectedThemeRaw: String = AppTheme.system.rawValue
     
     // Computed Properties
@@ -118,7 +119,7 @@ struct DashboardView: View {
             // Income
             StatCardView(
                 title: "Total Income",
-                value: totalIncome.asCurrency(),
+                value: totalIncome.asCurrency(currencyCode: currencyCode),
                 icon: "arrow.down.circle.fill",
                 gradientColors: [.green, .green.opacity(0.7)]
             )
@@ -127,7 +128,7 @@ struct DashboardView: View {
             // Expenses
             StatCardView(
                 title: "Total Expenses",
-                value: totalExpense.asCurrency(),
+                value: totalExpense.asCurrency(currencyCode: currencyCode),
                 icon: "arrow.up.circle.fill",
                 gradientColors: [.red, .red.opacity(0.7)]
             )
@@ -136,7 +137,7 @@ struct DashboardView: View {
             // Balance
             StatCardView(
                 title: "Balance",
-                value: balance.asCurrency(),
+                value: balance.asCurrency(currencyCode: currencyCode),
                 icon: "dollarsign.circle.fill",
                 gradientColors: balance >= 0 ? [.blue, .purple] : [.orange, .red]
             )

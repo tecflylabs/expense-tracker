@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct TransactionRowView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     let transaction: Transaction
     @State private var appeared = false
     
@@ -73,7 +76,7 @@ struct TransactionRowView: View {
             
             // Amount + Date
             VStack(alignment: .trailing, spacing: 4) {
-                Text("\(transaction.type == .income ? "+" : "-")\(transaction.amount.asCurrency())")
+                Text("\(transaction.type == .income ? "+" : "-")\(transaction.amount.asCurrency(currencyCode: currencyCode))")
                     .font(.headline)
                     .foregroundStyle(transaction.type == .income ? Color.income : Color.expense)
                 
@@ -88,7 +91,7 @@ struct TransactionRowView: View {
             appeared = true
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(transaction.type.rawValue): \(transaction.title), \(transaction.amount.asCurrency()), \(transaction.category.rawValue)")
+        .accessibilityLabel("\(transaction.type.rawValue): \(transaction.title), \(transaction.amount.asCurrency(currencyCode: currencyCode)), \(transaction.category.rawValue)")
         .accessibilityHint("Double tap to view details")
     }
 }

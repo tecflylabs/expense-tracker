@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct BudgetProgressView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     let budget: BudgetGoal
     let transactions: [Transaction]
     
@@ -81,7 +84,7 @@ struct BudgetProgressView: View {
                     Text("Spent")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(spent.asCurrency())
+                    Text(spent.asCurrency(currencyCode: currencyCode))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                 }
@@ -103,7 +106,7 @@ struct BudgetProgressView: View {
                     Text("Remaining")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(remaining.asCurrency())
+                    Text(remaining.asCurrency(currencyCode: currencyCode))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(remaining < 0 ? .red : .primary)

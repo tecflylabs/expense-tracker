@@ -7,9 +7,12 @@
 
 import Foundation
 import PDFKit
+import SwiftUI
 
 class ExportManager {
     static let shared = ExportManager()
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
     
     private init() {}
     
@@ -116,7 +119,7 @@ class ExportManager {
                 }
                 
                 let dateStr = transaction.date.formatted(style: .short)
-                let amountStr = transaction.amount.asCurrency()
+                let amountStr = transaction.amount.asCurrency(currencyCode: currencyCode)
                 let typeSymbol = transaction.type == .income ? "+" : "-"
                 
                 let line = "\(dateStr)  \(transaction.title)  \(typeSymbol)\(amountStr)"
@@ -161,15 +164,15 @@ class ExportManager {
         
         // Income
         "Total Income".draw(at: CGPoint(x: origin.x + 20, y: origin.y + 20), withAttributes: attributes)
-        totalIncome.asCurrency().draw(at: CGPoint(x: origin.x + 20, y: origin.y + 40), withAttributes: boldAttributes)
+        totalIncome.asCurrency(currencyCode: currencyCode).draw(at: CGPoint(x: origin.x + 20, y: origin.y + 40), withAttributes: boldAttributes)
         
         // Expense
         "Total Expense".draw(at: CGPoint(x: origin.x + 180, y: origin.y + 20), withAttributes: attributes)
-        totalExpense.asCurrency().draw(at: CGPoint(x: origin.x + 180, y: origin.y + 40), withAttributes: boldAttributes)
+        totalExpense.asCurrency(currencyCode: currencyCode).draw(at: CGPoint(x: origin.x + 180, y: origin.y + 40), withAttributes: boldAttributes)
         
         // Balance
         "Balance".draw(at: CGPoint(x: origin.x + 340, y: origin.y + 20), withAttributes: attributes)
-        balance.asCurrency().draw(at: CGPoint(x: origin.x + 340, y: origin.y + 40), withAttributes: boldAttributes)
+        balance.asCurrency(currencyCode: currencyCode).draw(at: CGPoint(x: origin.x + 340, y: origin.y + 40), withAttributes: boldAttributes)
     }
 }
 

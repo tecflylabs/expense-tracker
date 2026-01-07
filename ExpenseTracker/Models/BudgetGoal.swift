@@ -1,6 +1,6 @@
 //
 //  BudgetGoal.swift
-//  ExpenseTracker
+//  PennyFlow
 //
 //  Created by Manuel Zangl on 04.01.26.
 //

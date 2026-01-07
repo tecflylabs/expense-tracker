@@ -9,9 +9,20 @@ import SwiftUI
 import SwiftData
 
 struct InsightsView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     @Query private var transactions: [Transaction]
+    @Query private var budgets: [BudgetGoal]
+    
     @State private var chartsViewModel = ChartsViewModel()
     @State private var calculator: StatisticsCalculator? = nil
+    
+    @State private var insights: [Insight] = []
+    @State private var isLoadingInsights = false
+    
+    // Free limit (später via IAP gating)
+    private let freeInsightLimit = 3
     
     var body: some View {
         NavigationStack {
@@ -20,21 +31,14 @@ struct InsightsView: View {
                     emptyState
                 } else if let calculator {
                     VStack(spacing: 24) {
+                        smartInsightsSection
                         statisticsSection(calculator: calculator)
                         chartsSection
                     }
                     .padding()
                 } else {
-                    // Erste Berechnung läuft noch
-                    VStack {
-                        ProgressView()
-                            .padding(.top, 40)
-                        Text("Calculating insights…")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .padding()
+                    ProgressView()
+                        .padding()
                 }
             }
             .navigationTitle("Insights")
@@ -42,40 +46,100 @@ struct InsightsView: View {
             .onChange(of: transactions) { _, _ in
                 recalcAll()
             }
+            .onChange(of: budgets) { _, _ in
+                recalcInsights()
+            }
             .onAppear {
                 recalcAll()
             }
         }
     }
     
-    // MARK: - Recalculation
+    // MARK: - Recalc
     
     private func recalcAll() {
         let current = transactions
         
-        // Wenn keine Transaktionen: alles leeren und fertig
         guard !current.isEmpty else {
             chartsViewModel.reset()
             calculator = StatisticsCalculator(transactions: [])
+            insights = []
             return
         }
         
-        // Charts: synchron setzen, ViewModel rechnet intern async
         chartsViewModel.transactions = current
         
-        // Statistiken: im Hintergrund berechnen
         DispatchQueue.global(qos: .userInitiated).async {
             let calc = StatisticsCalculator(transactions: current)
             DispatchQueue.main.async {
-                // Nur setzen, wenn sich die Basisdaten nicht geändert haben
                 if current == self.transactions {
                     self.calculator = calc
                 }
             }
         }
+        
+        recalcInsights()
     }
     
-    // MARK: - Statistics Section
+    private func recalcInsights() {
+        let currentTx = transactions
+        let currentBudgets = budgets
+        
+        guard !currentTx.isEmpty else {
+            insights = []
+            return
+        }
+        
+        isLoadingInsights = true
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            let generator = InsightGenerator(transactions: currentTx, budgets: currentBudgets)
+            let all = generator.generate()
+            let limited = Array(all.prefix(self.freeInsightLimit))
+            
+            DispatchQueue.main.async {
+                // same-data guard
+                if currentTx == self.transactions {
+                    self.insights = limited
+                }
+                self.isLoadingInsights = false
+            }
+        }
+    }
+    
+    // MARK: - Smart Insights
+    
+    private var smartInsightsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Smart Insights")
+                    .font(.title2.bold())
+                Spacer()
+                
+                if isLoadingInsights {
+                    ProgressView()
+                        .scaleEffect(0.9)
+                }
+            }
+            
+            if insights.isEmpty, !isLoadingInsights {
+                ContentUnavailableView(
+                    "No insights yet",
+                    systemImage: "sparkles",
+                    description: Text("Add more transactions to unlock insights")
+                )
+                .frame(maxWidth: .infinity)
+            } else {
+                VStack(spacing: 10) {
+                    ForEach(insights) { insight in
+                        InsightRowView(insight: insight)
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - Statistics
     
     private func statisticsSection(calculator: StatisticsCalculator) -> some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -83,64 +147,52 @@ struct InsightsView: View {
                 .font(.title2.bold())
             
             VStack(spacing: 10) {
-                // Balance
                 StatCard(
                     title: "Balance",
-                    value: calculator.balance.asCurrency(),
+                    value: calculator.balance.asCurrency(currencyCode: currencyCode),
                     icon: "dollarsign.circle.fill",
                     iconColor: calculator.balance >= 0 ? .green : .red,
                     subtitle: "This month"
                 )
                 
-                // Income
                 StatCard(
                     title: "Income",
-                    value: calculator.totalIncome.asCurrency(),
+                    value: calculator.totalIncome.asCurrency(currencyCode: currencyCode),
                     icon: "arrow.down.circle.fill",
                     iconColor: .green,
                     trend: calculator.incomeTrend.map {
-                        TrendIndicator(
-                            text: "\(String(format: "%.1f", abs($0)))%",
-                            isPositive: $0 >= 0
-                        )
+                        TrendIndicator(text: "\(String(format: "%.1f", abs($0)))%", isPositive: $0 >= 0)
                     }
                 )
                 
-                // Expenses
                 StatCard(
                     title: "Expenses",
-                    value: calculator.totalExpenses.asCurrency(),
+                    value: calculator.totalExpenses.asCurrency(currencyCode: currencyCode),
                     icon: "arrow.up.circle.fill",
                     iconColor: .red,
                     trend: calculator.expenseTrend.map {
-                        TrendIndicator(
-                            text: "\(String(format: "%.1f", abs($0)))%",
-                            isPositive: $0 < 0   // Weniger Ausgaben = positiv
-                        )
+                        TrendIndicator(text: "\(String(format: "%.1f", abs($0)))%", isPositive: $0 < 0)
                     }
                 )
                 
-                // Daily Average
                 StatCard(
                     title: "Daily Average",
-                    value: calculator.averageDailySpending.asCurrency(),
+                    value: calculator.averageDailySpending.asCurrency(currencyCode: currencyCode),
                     icon: "calendar.circle.fill",
                     iconColor: .blue,
                     subtitle: "Per day"
                 )
                 
-                // Biggest Expense
                 if let biggest = calculator.biggestExpense {
                     StatCard(
                         title: "Biggest Expense",
-                        value: biggest.amount.asCurrency(),
+                        value: biggest.amount.asCurrency(currencyCode: currencyCode),
                         icon: biggest.category.systemImage,
                         iconColor: biggest.category.color,
                         subtitle: biggest.category.rawValue
                     )
                 }
                 
-                // Most Used Category
                 if let mostUsed = calculator.mostUsedCategory {
                     StatCard(
                         title: "Most Used Category",
@@ -151,7 +203,6 @@ struct InsightsView: View {
                     )
                 }
                 
-                // Transactions Count
                 StatCard(
                     title: "Total Transactions",
                     value: "\(calculator.transactionCount)",
@@ -160,7 +211,6 @@ struct InsightsView: View {
                     subtitle: "This month"
                 )
                 
-                // Spending Streak
                 StatCard(
                     title: "Spending Streak",
                     value: "\(calculator.spendingStreak) days",
@@ -172,7 +222,7 @@ struct InsightsView: View {
         }
     }
     
-    // MARK: - Charts Section
+    // MARK: - Charts
     
     private var chartsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -190,8 +240,6 @@ struct InsightsView: View {
         }
     }
     
-    // MARK: - Empty State
-    
     private var emptyState: some View {
         ContentUnavailableView(
             "No Insights Available",
@@ -201,7 +249,8 @@ struct InsightsView: View {
     }
 }
 
-#Preview {
+#Preview("InsightsView") {
     InsightsView()
         .modelContainer(previewContainer())
 }
+

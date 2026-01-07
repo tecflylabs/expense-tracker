@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct CategoryRowView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     let category: Category
     let amount: Double
     let percentage: Double
@@ -51,7 +54,7 @@ struct CategoryRowView: View {
             
             // Amount & Percentage
             VStack(alignment: .trailing, spacing: 2) {
-                Text(amount.asCurrency())
+                Text(amount.asCurrency(currencyCode: currencyCode))
                     .font(.headline)
                 
                 Text("\(Int(percentage))%")

@@ -2,6 +2,9 @@ import SwiftUI
 import Charts
 
 struct CategoryPieChartView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     let data: [CategoryChartData]
     @State private var selectedCategory: Category?
     
@@ -64,7 +67,7 @@ struct CategoryPieChartView: View {
                         Image(systemName: selectedData.category.systemImage)
                             .font(.title)
                             .foregroundStyle(colorForCategory(selectedData.category))
-                        Text(selectedData.amount.asCurrency())
+                        Text(selectedData.amount.asCurrency(currencyCode: currencyCode))
                             .font(.title2.bold())
                         Text("\(Int(selectedData.percentage))%")
                             .font(.caption)
@@ -115,7 +118,7 @@ struct CategoryPieChartView: View {
                         
                         Spacer()
                         
-                        Text(item.amount.asCurrency())
+                        Text(item.amount.asCurrency(currencyCode: currencyCode))
                             .font(.caption.bold())
                             .foregroundStyle(.primary)
                         

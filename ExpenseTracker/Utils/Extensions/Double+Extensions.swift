@@ -8,13 +8,8 @@
 import Foundation
 
 extension Double {
-    func asCurrency(code: String = "EUR") -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = code
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = 2
-        return formatter.string(from: NSNumber(value: self)) ?? "€0.00"
+    func asCurrency(currencyCode: String) -> String {
+        CurrencyFormatting.format(self, currencyCode: currencyCode)
     }
 }
 

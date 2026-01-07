@@ -9,6 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct TransactionDetailView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     
@@ -54,6 +57,9 @@ struct TransactionDetailView: View {
     // MARK: - Sections
     
     private var amountSection: some View {
+        
+        
+        
         Section {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
@@ -68,7 +74,7 @@ struct TransactionDetailView: View {
                 
                 Spacer()
                 
-                Text("\(transaction.type == .income ? "+" : "-")\(transaction.amount.asCurrency())")
+                Text("\(transaction.type == .income ? "+" : "-")\(transaction.amount.asCurrency(currencyCode: currencyCode))")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundStyle(transaction.type == .income ? .green : .red)

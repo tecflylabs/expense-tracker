@@ -74,6 +74,7 @@
 				Models/Transaction.swift,
 				Models/TransactionType.swift,
 				"Utils/Extensions/Double+Extensions.swift",
+				Utils/Helpers/CurrencyFormatting.swift,
 			);
 			target = 221DF0F62F0AA3260028C24A /* ExpenseTrackerWidgetExtension */;
 		};

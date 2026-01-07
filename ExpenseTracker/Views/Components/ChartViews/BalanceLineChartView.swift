@@ -2,6 +2,9 @@ import SwiftUI
 import Charts
 
 struct BalanceLineChartView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     let data: [DailyBalanceData]
     @State private var selectedDate: Date?
     
@@ -22,7 +25,7 @@ struct BalanceLineChartView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(selected.date.formatted(date: .abbreviated, time: .omitted))
                             .font(.caption.bold())
-                        Text(selected.balance.asCurrency())
+                        Text(selected.balance.asCurrency(currencyCode: currencyCode))
                             .font(.caption)
                             .foregroundStyle(selected.balance >= 0 ? .green : .red)
                     }

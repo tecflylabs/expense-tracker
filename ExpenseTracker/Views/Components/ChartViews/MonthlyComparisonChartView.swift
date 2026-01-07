@@ -2,6 +2,9 @@ import SwiftUI
 import Charts
 
 struct MonthlyComparisonChartView: View {
+    
+    @AppStorage("currencyCode") private var currencyCode: String = "EUR"
+    
     let data: [MonthlyData]
     @State private var selectedMonth: String?
     
@@ -23,10 +26,10 @@ struct MonthlyComparisonChartView: View {
                         Text(selected.month)
                             .font(.caption.bold())
                         HStack(spacing: 8) {
-                            Label(selected.income.asCurrency(), systemImage: "arrow.down.circle.fill")
+                            Label(selected.income.asCurrency(currencyCode: currencyCode), systemImage: "arrow.down.circle.fill")
                                 .font(.caption)
                                 .foregroundStyle(.green)
-                            Label(selected.expense.asCurrency(), systemImage: "arrow.up.circle.fill")
+                            Label(selected.expense.asCurrency(currencyCode: currencyCode), systemImage: "arrow.up.circle.fill")
                                 .font(.caption)
                                 .foregroundStyle(.red)
                         }
