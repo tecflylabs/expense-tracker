@@ -70,6 +70,7 @@
 		221DF1142F0AA9C50028C24A /* Exceptions for "ExpenseTracker" folder in "ExpenseTrackerWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Models/Attachment.swift,
 				Models/Category.swift,
 				Models/Transaction.swift,
 				Models/TransactionType.swift,

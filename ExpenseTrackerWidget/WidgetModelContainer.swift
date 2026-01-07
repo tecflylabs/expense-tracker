@@ -10,7 +10,8 @@ import Foundation
 
 @MainActor
 func widgetModelContainer() -> ModelContainer {
-    let schema = Schema([Transaction.self])
+    let schema = Schema([Transaction.self, Attachment.self])
+
     
 #if targetEnvironment(simulator)
     let configuration = ModelConfiguration(

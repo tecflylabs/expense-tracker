@@ -6,7 +6,8 @@ func sharedModelContainer() -> ModelContainer {
     let schema = Schema([
         Transaction.self,
         RecurringTransaction.self,
-        BudgetGoal.self
+        BudgetGoal.self,
+        Attachment.self
     ])
     
     // ✅ CHANGED: Vereinfachte Konfiguration

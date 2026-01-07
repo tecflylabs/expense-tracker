@@ -21,6 +21,7 @@ struct WidgetEntry: TimelineEntry {
 
 // MARK: - Timeline Provider
 
+@MainActor
 struct Provider: TimelineProvider {
     
     

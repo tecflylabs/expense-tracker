@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 struct TransactionDetailView: View {
     
@@ -16,6 +17,10 @@ struct TransactionDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     let transaction: Transaction
+    
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var attachmentToPreview: Attachment?
+    @State private var attachmentToDelete: Attachment?
     
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
@@ -30,19 +35,32 @@ struct TransactionDetailView: View {
                 notesSection(notes)
             }
             
+            attachmentsSection
             deleteSection
         }
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Edit") {
-                    showEditSheet = true
-                }
+                Button("Edit") { showEditSheet = true }
             }
         }
         .sheet(isPresented: $showEditSheet) {
             AddTransactionView(transactionToEdit: transaction)
+        }
+        .sheet(item: $attachmentToPreview) { attachment in
+            AttachmentPreviewView(url: AttachmentStore.resolveURL(relativePath: attachment.relativePath))
+        }
+        // Delete attachment bound to the selected attachment (fixes multi-tap delete)
+        .alert(item: $attachmentToDelete) { attachment in
+            Alert(
+                title: Text("Delete Attachment"),
+                message: Text("This will remove the file from this device."),
+                primaryButton: .destructive(Text("Delete")) {
+                    deleteAttachment(attachment)
+                },
+                secondaryButton: .cancel()
+            )
         }
         .alert("Delete Transaction", isPresented: $showDeleteAlert) {
             Button("Cancel", role: .cancel) { }
@@ -57,9 +75,6 @@ struct TransactionDetailView: View {
     // MARK: - Sections
     
     private var amountSection: some View {
-        
-        
-        
         Section {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
@@ -103,13 +118,11 @@ struct TransactionDetailView: View {
         }
     }
     
-    // Notes section with tags
     private func notesSection(_ notes: String) -> some View {
         Section {
             Text(notes)
                 .font(.body)
             
-            // Show tags if available
             if !transaction.tags.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Tags")
@@ -118,7 +131,6 @@ struct TransactionDetailView: View {
                         .textCase(.uppercase)
                     
                     TagListView(tags: transaction.tags) { tag in
-                        // Future: Filter by tag in parent view
                         print("Tapped tag: \(tag)")
                     }
                 }
@@ -126,6 +138,53 @@ struct TransactionDetailView: View {
             }
         } header: {
             Label("Notes", systemImage: "note.text")
+        }
+    }
+    
+    private var attachmentsSection: some View {
+        Section("Receipts") {
+            PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                Label("Add photo", systemImage: "paperclip")
+            }
+            .onChange(of: selectedPhotoItem) { _, newItem in
+                guard let newItem else { return }
+                Task { await addAttachment(from: newItem) }
+            }
+            
+            if transaction.attachments.isEmpty {
+                Text("No attachments yet.")
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(transaction.attachments) { attachment in
+                    Button {
+                        attachmentToPreview = attachment
+                    } label: {
+                        HStack {
+                            Image(systemName: "photo")
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Receipt photo")
+                                    .lineLimit(1)
+                                
+                                Text(attachment.createdAt.formatted(date: .abbreviated, time: .shortened))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .swipeActions {
+                        Button(role: .destructive) {
+                            attachmentToDelete = attachment
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+                    .contentShape(Rectangle())
+
+                }
+            }
         }
     }
     
@@ -142,7 +201,51 @@ struct TransactionDetailView: View {
     
     // MARK: - Methods
     
+    @MainActor
+    private func addAttachment(from item: PhotosPickerItem) async {
+        // Important: reset selection so picking again triggers onChange
+        defer { selectedPhotoItem = nil }
+        
+        do {
+            guard let data = try await item.loadTransferable(type: Data.self),
+                  let uiImage = UIImage( data: data) else { return }
+            
+            let saved = try AttachmentStore.saveJPEG(uiImage)
+            let attachment = Attachment(type: .photo, fileName: saved.fileName, relativePath: saved.relativePath)
+            attachment.transaction = transaction
+            
+            transaction.attachments.append(attachment)
+            context.insert(attachment)
+        } catch {
+#if DEBUG
+            print("Add attachment failed:", error)
+#endif
+        }
+    }
+    
+    @MainActor
+    private func deleteAttachment(_ attachment: Attachment) {
+        do {
+            try AttachmentStore.deleteFile(relativePath: attachment.relativePath)
+        } catch {
+#if DEBUG
+            print("Delete file failed:", error)
+#endif
+        }
+        
+        if let idx = transaction.attachments.firstIndex(where: { $0.id == attachment.id }) {
+            transaction.attachments.remove(at: idx)
+        }
+        context.delete(attachment)
+        attachmentToDelete = nil
+    }
+    
     private func deleteTransaction() {
+        // Optional but recommended: remove files too (SwiftData cascade won't delete files)
+        for attachment in transaction.attachments {
+            try? AttachmentStore.deleteFile(relativePath: attachment.relativePath)
+        }
+        
         context.delete(transaction)
         dismiss()
     }

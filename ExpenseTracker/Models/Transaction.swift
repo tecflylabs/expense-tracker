@@ -47,18 +47,10 @@ final class Transaction {
             return tag.dropFirst().lowercased() // Remove # and lowercase
         }
     }
+    
+    @Relationship(deleteRule: .cascade)
+    var attachments: [Attachment] = []
+
 }
 
 
-//extension Transaction {
-//    static var preview: Transaction {
-//        Transaction(
-//            title: "Grocery Shopping",
-//            amount: 45.99,
-//            date: Date.now,
-//            category: .food,
-//            type: .expense,
-//            notes: "Weekly groceries #weekly #essentials"  // ✅ Example with tags
-//        )
-//    }
-//}
