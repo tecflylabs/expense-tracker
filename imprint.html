@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PennyFlow – Impressum</title>
+  <meta name="description" content="Impressum und rechtliche Informationen für PennyFlow." />
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0b0c0f;
+      --card: rgba(255,255,255,.06);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --border: rgba(255,255,255,.10);
+      --accent: #ff6a00;
+      --link: #ff8a3d;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f7fb;
+        --card: rgba(255,255,255,.85);
+        --text: rgba(0,0,0,.90);
+        --muted: rgba(0,0,0,.62);
+        --border: rgba(0,0,0,.10);
+        --accent: #ff6a00;
+        --link: #c24a00;
+        --shadow: 0 14px 28px rgba(16,24,40,.10);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% -10%, rgba(255,106,0,.20), transparent 60%),
+                  radial-gradient(900px 600px at 110% 20%, rgba(255,138,61,.18), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 16px 56px; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .2px; font-size: 18px; }
+    .dot { width: 12px; height: 12px; border-radius: 99px; background: var(--accent); box-shadow: 0 0 0 6px rgba(255,106,0,.12); }
+
+    .nav { display: flex; gap: 16px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 28px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.2; }
+    h2 { margin: 28px 0 12px; font-size: 20px; color: var(--accent); }
+    p { margin: 12px 0; color: var(--text); }
+
+    .info-section {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .footer {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span> PennyFlow</div>
+      <div class="nav">
+        <a href="./support.html">Support</a>
+        <a href="./privacy.html">Privacy</a>
+        <a href="./imprint.html">Impressum</a>
+        <a href="https://github.com/Hurricane005/expense-tracker">GitHub</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h1>⚖️ Impressum</h1>
+      <p style="color: var(--muted); font-size: 14px;">Angaben gemäß § 5 TMG / § 25 MedienG</p>
+
+      <!-- Betreiber -->
+      <h2>Verantwortlich für den Inhalt</h2>
+      <div class="info-section">
+        <p>
+          <strong>Manuel Zangl</strong><br/>
+          Lichtenfelsgass 2<br/>
+          1220 Wien<br/>
+          Österreich
+        </p>
+      </div>
+
+      <!-- Kontakt -->
+      <h2>Kontakt</h2>
+      <div class="info-section">
+        <p>
+          <strong>E-Mail:</strong> <a href="mailto:zangl.manuel@gmail.com">zangl.manuel@gmail.com</a><br/>
+          <strong>Support:</strong> <a href="./support.html">support.html</a>
+        </p>
+      </div>
+
+      <!-- Rechtliches -->
+      <h2>Rechtliche Hinweise</h2>
+      <p>
+        <strong>Haftung für Inhalte:</strong> Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt. 
+        Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.
+      </p>
+      <p>
+        <strong>Haftung für Links:</strong> Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte 
+        wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen.
+      </p>
+
+      <!-- Urheberrecht -->
+      <h2>Urheberrecht</h2>
+      <p>
+        Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem österreichischen 
+        bzw. deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb 
+        der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
+      </p>
+      <p>
+        <strong>Open Source:</strong> Der Quellcode von PennyFlow ist unter MIT Lizenz auf 
+        <a href="https://github.com/Hurricane005/expense-tracker">GitHub</a> verfügbar.
+      </p>
+
+      <!-- Online-Streitbeilegung (EU Pflicht) -->
+      <h2>Online-Streitbeilegung</h2>
+      <p>
+        Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+        <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">
+          https://ec.europa.eu/consumers/odr
+        </a>
+      </p>
+      <p>
+        Unsere E-Mail-Adresse finden Sie oben im Impressum. Wir sind nicht bereit oder verpflichtet, an 
+        Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+      </p>
+
+      <!-- Bildnachweise (falls du Bilder/Icons verwendest) -->
+      <h2>Bildnachweise</h2>
+      <p>
+        Alle verwendeten Icons stammen von <strong>SF Symbols</strong> (Apple) und sind lizenzfrei für App-Entwicklung verwendbar.
+      </p>
+
+      <div class="footer">
+        <p><strong>PennyFlow</strong> © 2026 Manuel Zangl · Wien, Österreich</p>
+        <p style="margin-top: 12px;">
+          <a href="./support.html">Support</a> · 
+          <a href="./privacy.html">Privacy</a> · 
+          <a href="./imprint.html">Impressum</a> · 
+          <a href="https://github.com/Hurricane005/expense-tracker">GitHub</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
