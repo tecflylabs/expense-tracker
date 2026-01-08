@@ -112,6 +112,7 @@ struct SmallWidgetView: View {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
+            .ignoresSafeArea()
             
             VStack(spacing: 8) {
                 Image(systemName: "dollarsign.circle.fill")
@@ -131,6 +132,7 @@ struct SmallWidgetView: View {
             }
             .padding()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -302,6 +304,7 @@ struct ExpenseTrackerWidget: Widget {
         .configurationDisplayName("Expense Tracker")
         .description("Track your finances at a glance")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
     }
 }
 

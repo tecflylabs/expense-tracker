@@ -14,20 +14,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		221DF0782F03FA590028C24A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 221DF0602F03FA570028C24A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 221DF0672F03FA570028C24A;
-			remoteInfo = ExpenseTracker;
-		};
-		221DF0822F03FA590028C24A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 221DF0602F03FA570028C24A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 221DF0672F03FA570028C24A;
-			remoteInfo = ExpenseTracker;
-		};
 		221DF1072F0AA3290028C24A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 221DF0602F03FA570028C24A /* Project object */;
@@ -53,8 +39,6 @@
 
 /* Begin PBXFileReference section */
 		221DF0682F03FA570028C24A /* ExpenseTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExpenseTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		221DF0772F03FA590028C24A /* ExpenseTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExpenseTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		221DF0812F03FA590028C24A /* ExpenseTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExpenseTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		221DF0F72F0AA3260028C24A /* ExpenseTrackerWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ExpenseTrackerWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		221DF0F92F0AA3260028C24A /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		221DF0FB2F0AA3270028C24A /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -73,15 +57,37 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Models/Attachment.swift,
+				Models/BudgetGoal.swift,
 				Models/Category.swift,
+				Models/RecurringFrequency.swift,
+				Models/RecurringTransaction.swift,
 				Models/Transaction.swift,
 				Models/TransactionType.swift,
+				Shared/SharedModelContainer.swift,
+				"Utils/Extensions/Date+Extensions.swift",
 				"Utils/Extensions/Double+Extensions.swift",
 				Utils/Helpers/CurrencyFormatting.swift,
 			);
 			target = 221DF0F62F0AA3260028C24A /* ExpenseTrackerWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		228B31842F0FF59B00CE1A01 /* Exceptions for "ExpenseTrackerWidgetExtension" folder in "Copy Bundle Resources" phase from "ExpenseTracker" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 221DF0662F03FA570028C24A /* Resources */;
+			membershipExceptions = (
+				ExpenseTrackerWidgetExtension.entitlements,
+			);
+		};
+		228B31852F0FF59B00CE1A01 /* Exceptions for "ExpenseTrackerWidgetExtension" folder in "Copy Bundle Resources" phase from "ExpenseTrackerWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 221DF0F52F0AA3260028C24A /* Resources */;
+			membershipExceptions = (
+				ExpenseTrackerWidgetExtension.entitlements,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		221DF06A2F03FA570028C24A /* ExpenseTracker */ = {
@@ -92,16 +98,6 @@
 			path = ExpenseTracker;
 			sourceTree = "<group>";
 		};
-		221DF07A2F03FA590028C24A /* ExpenseTrackerTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ExpenseTrackerTests;
-			sourceTree = "<group>";
-		};
-		221DF0842F03FA590028C24A /* ExpenseTrackerUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ExpenseTrackerUITests;
-			sourceTree = "<group>";
-		};
 		221DF0FD2F0AA3270028C24A /* ExpenseTrackerWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -110,24 +106,19 @@
 			path = ExpenseTrackerWidget;
 			sourceTree = "<group>";
 		};
+		228B317D2F0FF55000CE1A01 /* ExpenseTrackerWidgetExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				228B31842F0FF59B00CE1A01 /* Exceptions for "ExpenseTrackerWidgetExtension" folder in "Copy Bundle Resources" phase from "ExpenseTracker" target */,
+				228B31852F0FF59B00CE1A01 /* Exceptions for "ExpenseTrackerWidgetExtension" folder in "Copy Bundle Resources" phase from "ExpenseTrackerWidgetExtension" target */,
+			);
+			path = ExpenseTrackerWidgetExtension;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		221DF0652F03FA570028C24A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		221DF0742F03FA590028C24A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		221DF07E2F03FA590028C24A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -149,9 +140,8 @@
 		221DF05F2F03FA570028C24A = {
 			isa = PBXGroup;
 			children = (
+				228B317D2F0FF55000CE1A01 /* ExpenseTrackerWidgetExtension */,
 				221DF06A2F03FA570028C24A /* ExpenseTracker */,
-				221DF07A2F03FA590028C24A /* ExpenseTrackerTests */,
-				221DF0842F03FA590028C24A /* ExpenseTrackerUITests */,
 				221DF0FD2F0AA3270028C24A /* ExpenseTrackerWidget */,
 				221DF0F82F0AA3260028C24A /* Frameworks */,
 				221DF0692F03FA570028C24A /* Products */,
@@ -163,8 +153,6 @@
 			isa = PBXGroup;
 			children = (
 				221DF0682F03FA570028C24A /* ExpenseTracker.app */,
-				221DF0772F03FA590028C24A /* ExpenseTrackerTests.xctest */,
-				221DF0812F03FA590028C24A /* ExpenseTrackerUITests.xctest */,
 				221DF0F72F0AA3260028C24A /* ExpenseTrackerWidgetExtension.appex */,
 			);
 			name = Products;
@@ -198,6 +186,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				221DF06A2F03FA570028C24A /* ExpenseTracker */,
+				228B317D2F0FF55000CE1A01 /* ExpenseTrackerWidgetExtension */,
 			);
 			name = ExpenseTracker;
 			packageProductDependencies = (
@@ -205,52 +194,6 @@
 			productName = ExpenseTracker;
 			productReference = 221DF0682F03FA570028C24A /* ExpenseTracker.app */;
 			productType = "com.apple.product-type.application";
-		};
-		221DF0762F03FA590028C24A /* ExpenseTrackerTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 221DF08E2F03FA590028C24A /* Build configuration list for PBXNativeTarget "ExpenseTrackerTests" */;
-			buildPhases = (
-				221DF0732F03FA590028C24A /* Sources */,
-				221DF0742F03FA590028C24A /* Frameworks */,
-				221DF0752F03FA590028C24A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				221DF0792F03FA590028C24A /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				221DF07A2F03FA590028C24A /* ExpenseTrackerTests */,
-			);
-			name = ExpenseTrackerTests;
-			packageProductDependencies = (
-			);
-			productName = ExpenseTrackerTests;
-			productReference = 221DF0772F03FA590028C24A /* ExpenseTrackerTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		221DF0802F03FA590028C24A /* ExpenseTrackerUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 221DF0912F03FA590028C24A /* Build configuration list for PBXNativeTarget "ExpenseTrackerUITests" */;
-			buildPhases = (
-				221DF07D2F03FA590028C24A /* Sources */,
-				221DF07E2F03FA590028C24A /* Frameworks */,
-				221DF07F2F03FA590028C24A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				221DF0832F03FA590028C24A /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				221DF0842F03FA590028C24A /* ExpenseTrackerUITests */,
-			);
-			name = ExpenseTrackerUITests;
-			packageProductDependencies = (
-			);
-			productName = ExpenseTrackerUITests;
-			productReference = 221DF0812F03FA590028C24A /* ExpenseTrackerUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		221DF0F62F0AA3260028C24A /* ExpenseTrackerWidgetExtension */ = {
 			isa = PBXNativeTarget;
@@ -287,14 +230,6 @@
 					221DF0672F03FA570028C24A = {
 						CreatedOnToolsVersion = 26.2;
 					};
-					221DF0762F03FA590028C24A = {
-						CreatedOnToolsVersion = 26.2;
-						TestTargetID = 221DF0672F03FA570028C24A;
-					};
-					221DF0802F03FA590028C24A = {
-						CreatedOnToolsVersion = 26.2;
-						TestTargetID = 221DF0672F03FA570028C24A;
-					};
 					221DF0F62F0AA3260028C24A = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -315,8 +250,6 @@
 			projectRoot = "";
 			targets = (
 				221DF0672F03FA570028C24A /* ExpenseTracker */,
-				221DF0762F03FA590028C24A /* ExpenseTrackerTests */,
-				221DF0802F03FA590028C24A /* ExpenseTrackerUITests */,
 				221DF0F62F0AA3260028C24A /* ExpenseTrackerWidgetExtension */,
 			);
 		};
@@ -328,20 +261,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				221DF17A2F0EEE420028C24A /* Configuration.storekit in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		221DF0752F03FA590028C24A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		221DF07F2F03FA590028C24A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,20 +281,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		221DF0732F03FA590028C24A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		221DF07D2F03FA590028C24A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		221DF0F32F0AA3260028C24A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -386,16 +291,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		221DF0792F03FA590028C24A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 221DF0672F03FA570028C24A /* ExpenseTracker */;
-			targetProxy = 221DF0782F03FA590028C24A /* PBXContainerItemProxy */;
-		};
-		221DF0832F03FA590028C24A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 221DF0672F03FA570028C24A /* ExpenseTracker */;
-			targetProxy = 221DF0822F03FA590028C24A /* PBXContainerItemProxy */;
-		};
 		221DF1082F0AA3290028C24A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 221DF0F62F0AA3260028C24A /* ExpenseTrackerWidgetExtension */;
@@ -595,93 +490,13 @@
 			};
 			name = Release;
 		};
-		221DF08F2F03FA590028C24A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hurricane.ExpenseTrackerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ExpenseTracker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ExpenseTracker";
-			};
-			name = Debug;
-		};
-		221DF0902F03FA590028C24A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hurricane.ExpenseTrackerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ExpenseTracker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ExpenseTracker";
-			};
-			name = Release;
-		};
-		221DF0922F03FA590028C24A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hurricane.ExpenseTrackerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = ExpenseTracker;
-			};
-			name = Debug;
-		};
-		221DF0932F03FA590028C24A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hurricane.ExpenseTrackerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = ExpenseTracker;
-			};
-			name = Release;
-		};
 		221DF10C2F0AA3290028C24A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ExpenseTrackerWidgetExtension/ExpenseTrackerWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CU4937YU3Z;
@@ -698,6 +513,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hurricane.pennyflow.PennyFlowWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -713,6 +529,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ExpenseTrackerWidgetExtension/ExpenseTrackerWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CU4937YU3Z;
@@ -729,6 +547,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hurricane.pennyflow.PennyFlowWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -756,24 +575,6 @@
 			buildConfigurations = (
 				221DF08C2F03FA590028C24A /* Debug */,
 				221DF08D2F03FA590028C24A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		221DF08E2F03FA590028C24A /* Build configuration list for PBXNativeTarget "ExpenseTrackerTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				221DF08F2F03FA590028C24A /* Debug */,
-				221DF0902F03FA590028C24A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		221DF0912F03FA590028C24A /* Build configuration list for PBXNativeTarget "ExpenseTrackerUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				221DF0922F03FA590028C24A /* Debug */,
-				221DF0932F03FA590028C24A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

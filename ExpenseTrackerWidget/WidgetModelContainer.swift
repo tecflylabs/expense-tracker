@@ -20,7 +20,7 @@ func widgetModelContainer() -> ModelContainer {
     )
 #else
     let groupURL = FileManager.default.containerURL(
-        forSecurityApplicationGroupIdentifier: "group.com.hurricane.expensetracker"
+        forSecurityApplicationGroupIdentifier: "group.com.hurricane.pennyflow"
     )!
     
     let url = groupURL.appendingPathComponent("ExpenseTracker.sqlite")
