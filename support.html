@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PennyFlow – Support</title>
-  <meta name="description" content="Support page for PennyFlow." />
+  <title>PennyFlow – Support & Help Center</title>
+  <meta name="description" content="Complete support guide for PennyFlow - Learn how to track expenses, set budgets, use widgets, and more." />
   <style>
     :root {
       color-scheme: light dark;
@@ -16,6 +16,8 @@
       --accent: #ff6a00;
       --link: #ff8a3d;
       --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --success: #34c759;
+      --warning: #ff9f0a;
     }
 
     @media (prefers-color-scheme: light) {
@@ -39,7 +41,7 @@
                   radial-gradient(900px 600px at 110% 20%, rgba(255,138,61,.18), transparent 60%),
                   var(--bg);
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     a { color: var(--link); text-decoration: none; }
@@ -52,60 +54,173 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 24px;
     }
 
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .2px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .2px; font-size: 18px; }
     .dot { width: 12px; height: 12px; border-radius: 99px; background: var(--accent); box-shadow: 0 0 0 6px rgba(255,106,0,.12); }
 
-    .nav { display: flex; gap: 14px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+    .nav { display: flex; gap: 16px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
 
     .card {
       background: var(--card);
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
       border-radius: 18px;
-      padding: 18px;
+      padding: 28px;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      margin-bottom: 16px;
     }
 
-    h1 { margin: 6px 0 8px; font-size: 28px; line-height: 1.2; }
-    .meta { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+    h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.2; }
+    h2 { margin: 28px 0 14px; font-size: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    h3 { margin: 20px 0 10px; font-size: 16px; color: var(--accent); }
+    
+    .meta { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
 
     .grid {
       display: grid;
       grid-template-columns: 1fr;
       gap: 12px;
-      margin-top: 14px;
+      margin-top: 20px;
     }
 
     @media (min-width: 720px) {
       .grid { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
     }
 
     .tile {
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 14px;
+      padding: 16px;
       background: rgba(255,255,255,.04);
+      transition: transform .2s, box-shadow .2s;
     }
 
-    .tile h2 { margin: 0 0 8px; font-size: 16px; }
-    .tile p { margin: 0; color: var(--muted); }
+    .tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255,106,0,.15);
+    }
+
+    .tile h3 { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+    .tile p { margin: 0; color: var(--muted); font-size: 14px; }
+    .tile code { 
+      background: rgba(255,106,0,.12); 
+      padding: 2px 6px; 
+      border-radius: 6px; 
+      font-size: 13px;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .badge-pro {
+      background: linear-gradient(135deg, #ff6a00, #ff8a3d);
+      color: white;
+    }
+
+    .badge-free {
+      background: rgba(52,199,89,.18);
+      color: var(--success);
+      border: 1px solid rgba(52,199,89,.3);
+    }
 
     .cta {
       display: inline-block;
-      margin-top: 12px;
-      padding: 10px 12px;
+      margin-top: 16px;
+      padding: 12px 20px;
       border-radius: 12px;
       background: rgba(255,106,0,.16);
       border: 1px solid rgba(255,106,0,.25);
       color: var(--text);
       font-weight: 600;
+      transition: all .2s;
     }
 
-    .footer { margin-top: 22px; color: var(--muted); font-size: 13px; }
+    .cta:hover {
+      background: rgba(255,106,0,.25);
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .alert {
+      padding: 14px 18px;
+      border-radius: 12px;
+      margin: 16px 0;
+      border: 1px solid;
+    }
+
+    .alert-info {
+      background: rgba(10,132,255,.10);
+      border-color: rgba(10,132,255,.25);
+      color: var(--text);
+    }
+
+    .alert-warning {
+      background: rgba(255,159,10,.10);
+      border-color: rgba(255,159,10,.25);
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-q {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .faq-a {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    ol, ul {
+      padding-left: 24px;
+      color: var(--muted);
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    .footer { 
+      margin-top: 32px; 
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted); 
+      font-size: 13px; 
+      text-align: center;
+    }
+
+    .contact-box {
+      background: rgba(255,106,0,.08);
+      border: 1px solid rgba(255,106,0,.20);
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .contact-box h3 {
+      margin: 0 0 10px;
+      color: var(--text);
+    }
   </style>
 </head>
 
@@ -121,31 +236,285 @@
     </div>
 
     <div class="card">
-      <h1>Support</h1>
-      <p class="meta">Need help? Contact: <a href="mailto:zangl.manuel@gmail.com">zangl.manuel@gmail.com</a></p>
+      <h1>📚 Support & Help Center</h1>
+      <p class="meta">Everything you need to master PennyFlow and take control of your finances.</p>
 
+      <!-- Quick Start -->
+      <h2>🚀 Getting Started</h2>
       <div class="grid">
         <div class="tile">
-          <h2>Add receipt photos</h2>
-          <p>Open a transaction → Details → Receipts → “Add photo”.</p>
+          <h3>Add Your First Transaction</h3>
+          <p>Tap the <code>+</code> button → Choose Income/Expense → Fill details → Save</p>
         </div>
         <div class="tile">
-          <h2>Delete a receipt</h2>
-          <p>Swipe the receipt row → Delete.</p>
+          <h3>Select Your Currency</h3>
+          <p>Settings → Currency → Choose from 150+ currencies (USD, EUR, GBP, etc.)</p>
         </div>
         <div class="tile">
-          <h2>Export data</h2>
-          <p>Settings → Export → CSV or PDF.</p>
+          <h3>View Your Dashboard</h3>
+          <p>See total balance, monthly stats, and recent transactions at a glance</p>
         </div>
         <div class="tile">
-          <h2>Bug report</h2>
-          <p>Include iPhone model + iOS version + what you expected vs. what happened.</p>
+          <h3>Enable Face ID Lock</h3>
+          <p>Settings → Face ID Lock → Protect your financial data with biometrics</p>
         </div>
       </div>
 
-      <a class="cta" href="./privacy.html">Read Privacy Policy</a>
-
+      <!-- Core Features -->
+      <h2>💰 Core Features</h2>
       
+      <h3>Transactions</h3>
+      <ul>
+        <li><strong>Add Transaction:</strong> Tap <code>+</code> button on main screen</li>
+        <li><strong>Edit Transaction:</strong> Tap on any transaction → Edit details</li>
+        <li><strong>Delete Transaction:</strong> Swipe left on transaction row → Delete</li>
+        <li><strong>Search Transactions:</strong> Use search bar to find by title, amount, or category</li>
+        <li><strong>Filter & Sort:</strong> Filter button → Choose date range, category, or transaction type</li>
+      </ul>
+
+      <h3>Categories <span class="badge badge-free">8 Built-in</span></h3>
+      <p>Track expenses across 8 predefined categories:</p>
+      <div class="grid grid-3">
+        <div class="tile">🍔 Food</div>
+        <div class="tile">🚗 Transport</div>
+        <div class="tile">🛍️ Shopping</div>
+        <div class="tile">🎬 Entertainment</div>
+        <div class="tile">🏥 Health</div>
+        <div class="tile">📄 Bills</div>
+        <div class="tile">💵 Salary</div>
+        <div class="tile">🔹 Other</div>
+      </div>
+
+      <!-- Pro Features -->
+      <h2>⭐ Pro Features <span class="badge badge-pro">Pro Only</span></h2>
+      
+      <div class="grid">
+        <div class="tile">
+          <h3>📊 Advanced Charts & Analytics</h3>
+          <p>View spending by category, monthly trends, and balance over time with interactive charts</p>
+        </div>
+        <div class="tile">
+          <h3>🎯 Budget Goals</h3>
+          <p>Set monthly limits per category with smart warnings at 75%, 90%, and 100% usage</p>
+        </div>
+        <div class="tile">
+          <h3>🔄 Recurring Transactions</h3>
+          <p>Automate subscriptions, rent, salary - supports daily, weekly, monthly, yearly</p>
+        </div>
+        <div class="tile">
+          <h3>📎 Receipt Attachments</h3>
+          <p>Attach photos to transactions, compressed automatically to save space</p>
+        </div>
+        <div class="tile">
+          <h3>📤 Export Data (CSV/PDF)</h3>
+          <p>Export all transactions for tax filing, accounting, or backup</p>
+        </div>
+        <div class="tile">
+          <h3>💡 AI Insights</h3>
+          <p>Get personalized spending insights and saving recommendations</p>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <strong>💎 Unlock Pro:</strong> One-time purchase, lifetime access. Settings → Upgrade to Pro
+      </div>
+
+      <!-- Widgets -->
+      <h2>📱 Home Screen Widgets</h2>
+      <p>Access your finances directly from your iPhone home screen:</p>
+      
+      <div class="grid">
+        <div class="tile">
+          <h3>Small Widget</h3>
+          <p>Shows current balance with color-coded status (positive = blue/purple, negative = orange/red)</p>
+        </div>
+        <div class="tile">
+          <h3>Medium Widget</h3>
+          <p>Recent transactions (last 3) with balance overview</p>
+        </div>
+        <div class="tile">
+          <h3>Large Widget</h3>
+          <p>Monthly income/expense stats + 4 recent transactions + balance</p>
+        </div>
+      </div>
+
+      <div class="alert alert-warning">
+        <strong>💡 Widget not updating?</strong> Open the app → Widgets refresh automatically every 15 minutes. Force refresh: Long-press widget → Edit Widget
+      </div>
+
+      <!-- Advanced Features -->
+      <h2>🔧 Advanced Features</h2>
+
+      <h3>Recurring Transactions <span class="badge badge-pro">Pro</span></h3>
+      <ol>
+        <li>Go to <strong>Recurring</strong> tab</li>
+        <li>Tap <code>+</code> → Fill details</li>
+        <li>Choose frequency: Daily, Weekly, Bi-weekly, Monthly, or Yearly</li>
+        <li>Set start date → Save</li>
+        <li>App automatically generates transactions on due dates</li>
+      </ol>
+
+      <h3>Budget Goals <span class="badge badge-pro">Pro</span></h3>
+      <ol>
+        <li>Go to <strong>Budget</strong> tab</li>
+        <li>Tap <strong>Add Budget Goal</strong></li>
+        <li>Select category (e.g., Food, Transport)</li>
+        <li>Set monthly limit (e.g., $500)</li>
+        <li>Track progress with visual bars and warnings</li>
+      </ol>
+
+      <h3>Receipt Attachments <span class="badge badge-pro">Pro</span></h3>
+      <ol>
+        <li>Open any transaction</li>
+        <li>Scroll to <strong>Receipts</strong> section</li>
+        <li>Tap <strong>Add Photo</strong> → Take/Choose photo</li>
+        <li>Photos are compressed to save storage</li>
+        <li>Swipe to delete receipts</li>
+      </ol>
+
+      <h3>Export Data <span class="badge badge-pro">Pro</span></h3>
+      <ol>
+        <li>Settings → <strong>Export Data</strong></li>
+        <li>Choose format: <strong>CSV</strong> (Excel) or <strong>PDF</strong></li>
+        <li>Select date range or export all</li>
+        <li>Share via Email, iCloud, AirDrop</li>
+      </ol>
+
+      <!-- Privacy & Security -->
+      <h2>🔒 Privacy & Security</h2>
+      
+      <h3>Face ID / Touch ID Lock</h3>
+      <ul>
+        <li>Settings → <strong>Face ID Lock</strong> → Enable</li>
+        <li>Choose auto-lock timeout: Immediately, 1, 5, 15 minutes</li>
+        <li>App locks when backgrounded based on timeout</li>
+      </ul>
+
+      <h3>Data Privacy</h3>
+      <ul>
+        <li>✅ <strong>100% local storage</strong> – All data stays on your device</li>
+        <li>✅ <strong>No cloud sync</strong> – Your data never leaves your iPhone</li>
+        <li>✅ <strong>No ads, no tracking</strong> – Zero data collection</li>
+        <li>✅ <strong>No account required</strong> – Start using immediately</li>
+      </ul>
+
+      <div class="alert alert-info">
+        <strong>📖 Read our full <a href="./privacy.html">Privacy Policy</a></strong>
+      </div>
+
+      <!-- Customization -->
+      <h2>🎨 Customization</h2>
+      
+      <div class="grid">
+        <div class="tile">
+          <h3>Theme</h3>
+          <p>Settings → Theme → System, Light, or Dark mode</p>
+        </div>
+        <div class="tile">
+          <h3>Currency</h3>
+          <p>Settings → Currency → 150+ currencies supported</p>
+        </div>
+        <div class="tile">
+          <h3>Transaction Tags</h3>
+          <p>Add hashtags in notes (e.g., #vacation) to organize transactions</p>
+        </div>
+        <div class="tile">
+          <h3>Sort & Filter</h3>
+          <p>Customize transaction list by date, amount, category, or type</p>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <h2>❓ Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <div class="faq-q">Q: How do I backup my data?</div>
+        <div class="faq-a">A: Enable iCloud Backup in iPhone Settings → Your Name → iCloud → Backup. Your data is included in device backups. Pro users can also export CSV/PDF for manual backup.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Q: Can I sync across devices?</div>
+        <div class="faq-a">A: Currently, PennyFlow stores data locally on your device. Cross-device sync may be added in a future update.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Q: What's the difference between Free and Pro?</div>
+        <div class="faq-a">A: Free includes unlimited transactions, 8 categories, and basic stats. Pro adds charts, budget goals, recurring transactions, receipt attachments, export, and AI insights.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Q: Is Pro a subscription?</div>
+        <div class="faq-a">A: No! Pro is a one-time purchase with lifetime access. No recurring fees.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Q: Widget showing old data?</div>
+        <div class="faq-a">A: Widgets update every 15 minutes. Open the app to force refresh, or remove and re-add the widget.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Q: Can I delete all transactions at once?</div>
+        <div class="faq-a">A: Currently, delete one at a time by swiping. Bulk delete may be added in future updates. Pro users can export before deleting.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Q: App crashes or slow performance?</div>
+        <div class="faq-a">A: Try: Force quit app → Restart iPhone → Update to latest iOS. If issue persists, contact support with device model and iOS version.</div>
+      </div>
+
+      <!-- Troubleshooting -->
+      <h2>🔨 Troubleshooting</h2>
+
+      <h3>Widget Not Showing Data</h3>
+      <ol>
+        <li>Open PennyFlow app → Add at least one transaction</li>
+        <li>Remove widget from home screen</li>
+        <li>Wait 10 seconds</li>
+        <li>Re-add widget → Data should appear</li>
+      </ol>
+
+      <h3>Face ID Not Working</h3>
+      <ol>
+        <li>Settings → Face ID Lock → Toggle OFF and ON again</li>
+        <li>Check iPhone Settings → Face ID & Passcode → Ensure Face ID is set up</li>
+        <li>Restart app</li>
+      </ol>
+
+      <h3>Export Not Working (Pro)</h3>
+      <ol>
+        <li>Ensure you have at least one transaction</li>
+        <li>Try exporting smaller date range first</li>
+        <li>Check iPhone storage (Settings → General → Storage)</li>
+      </ol>
+
+      <h3>Receipt Photos Not Saving (Pro)</h3>
+      <ol>
+        <li>Settings → Privacy → Photos → Enable for PennyFlow</li>
+        <li>Settings → Privacy → Camera → Enable for PennyFlow</li>
+        <li>Check storage space</li>
+      </ol>
+
+      <!-- Contact -->
+      <div class="contact-box">
+        <h3>💬 Need More Help?</h3>
+        <p>Email us at <a href="mailto:zangl.manuel@gmail.com"><strong>zangl.manuel@gmail.com</strong></a></p>
+        <p style="margin: 12px 0 0; font-size: 13px; color: var(--muted);">
+          Include: iPhone model, iOS version, screenshots (if applicable)<br/>
+          We respond within 24 hours!
+        </p>
+      </div>
+
+      <a class="cta" href="./privacy.html">📖 Read Privacy Policy</a>
+      <a class="cta" href="https://github.com/Hurricane005/expense-tracker">⭐ Star on GitHub</a>
+    </div>
+
+    <div class="footer">
+      <p>PennyFlow © 2026 · Made with ❤️ for financial wellness</p>
+      <p style="margin-top: 8px;">
+        <a href="./support.html">Support</a> · 
+        <a href="./privacy.html">Privacy</a> · 
+        <a href="https://github.com/Hurricane005/expense-tracker">GitHub</a>
+      </p>
     </div>
   </div>
 </body>
