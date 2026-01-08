@@ -204,21 +204,6 @@ struct SettingsView: View {
     
     private var supportSection: some View {
         Section {
-            Button {
-                if let supportURL {
-                    openURL(supportURL)
-                } else if let mailtoURL {
-                    openURL(mailtoURL)
-                }
-            } label: {
-                HStack {
-                    Label("Contact Developer", systemImage: "envelope.fill")
-                    Spacer()
-                    Image(systemName: "arrow.up.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }.tint(.primary)
             
             
             if let supportURL {
@@ -261,7 +246,7 @@ struct SettingsView: View {
         } header: {
             Label("Support", systemImage: "heart.fill")
         } footer: {
-            Text("Questions or feedback? Use Contact Developer or visit the support site.")
+            Text("Questions or feedback? Visit the support site.")
         }
     }
     
