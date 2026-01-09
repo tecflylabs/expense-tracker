@@ -40,7 +40,7 @@ extension OnboardingPage {
             subtitle: "Your data, protected",
             imageName: "faceid",
             imageColor: .green,
-            description: "Lock your financial data with Face ID or Touch ID. Your privacy is our priority - all data stays on your device.",
+            description: "Lock your financial data with Face ID. Your privacy is our priority - all data stays on your device.",
             isProPage: false
         ),
         // Pro Promo Page
