@@ -10,8 +10,11 @@ import Foundation
 
 @MainActor
 func widgetModelContainer() -> ModelContainer {
+    
     let schema = Schema([
         Transaction.self,
+        RecurringTransaction.self,
+        BudgetGoal.self,
         Attachment.self
     ])
     
@@ -22,6 +25,12 @@ func widgetModelContainer() -> ModelContainer {
     }
     
     let url = groupURL.appendingPathComponent("ExpenseTracker.sqlite")
+    
+#if DEBUG
+    print("🔍 [WIDGET] Database URL: \(url.path)")
+    print("🔍 [WIDGET] App Group URL: \(groupURL.path)")
+    print("🔍 [WIDGET] File exists: \(FileManager.default.fileExists(atPath: url.path))")
+#endif
     
     let configuration = ModelConfiguration(
         schema: schema,

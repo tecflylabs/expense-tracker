@@ -106,9 +106,7 @@ struct SmallWidgetView: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: entry.balance >= 0
-                ? [Color.blue, Color.purple]
-                : [Color.orange, Color.red],
+                colors: [Color.black.opacity(0.95), Color.orange],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )

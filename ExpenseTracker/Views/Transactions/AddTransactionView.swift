@@ -187,7 +187,18 @@ struct AddTransactionView: View {
             )
             context.insert(newTransaction)
         }
-        WidgetCenter.shared.reloadAllTimelines()
+        
+        do {
+            try context.save() // WICHTIG: explizit speichern
+            // Optional: Nur das spezifische Widget reloaden
+            // WidgetCenter.shared.reloadTimelines(ofKind: "ExpenseTrackerWidget")
+            WidgetCenter.shared.reloadAllTimelines()
+        } catch {
+            // Fehlerbehandlung, falls Speichern fehlschlägt
+            print("Failed to save transaction: \(error)")
+            HapticManager.shared.notification(type: .error)
+            return
+        }
         
         withAnimation(.smooth) {
             dismiss()
