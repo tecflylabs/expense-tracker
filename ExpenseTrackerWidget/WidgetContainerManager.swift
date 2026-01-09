@@ -17,7 +17,7 @@ final class WidgetContainerManager {
     private init() {
         print("🏗️ [WIDGET CONTAINER] Initializing...")
         
-        // ✅ ALLE Models die Transaction brauchen könnte!
+        
         let schema = Schema([
             Transaction.self,
             RecurringTransaction.self,
@@ -25,7 +25,7 @@ final class WidgetContainerManager {
             Attachment.self
         ])
         
-        // ✅ App Group URL (WICHTIG!)
+       
         guard let groupURL = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: "group.com.hurricane.pennyflow"
         ) else {
@@ -38,17 +38,17 @@ final class WidgetContainerManager {
         print("🔍 [WIDGET CONTAINER] Database URL: \(url.path)")
         print("🔍 [WIDGET CONTAINER] File exists: \(FileManager.default.fileExists(atPath: url.path))")
         
-        // ✅ Check file size (debug)
+        
         if let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
            let fileSize = attrs[.size] as? Int64 {
             print("📊 [WIDGET CONTAINER] Database size: \(fileSize) bytes")
         }
         
-        // ✅ ModelConfiguration mit App Group URL
+  
         let configuration = ModelConfiguration(
             schema: schema,
             url: url,
-            allowsSave: false  // Widget nur lesen, nicht schreiben!
+            allowsSave: false
         )
         
         do {
