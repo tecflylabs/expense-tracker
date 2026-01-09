@@ -85,7 +85,6 @@ struct AddTransactionView: View {
         }
     }
     
-    // ✨ ENHANCED: Visual category picker with colors
     private var categorySection: some View {
         Section("Category") {
             Picker("Category", selection: $selectedCategory) {
@@ -103,7 +102,6 @@ struct AddTransactionView: View {
             .pickerStyle(.menu)
             .tint(.orange)
             
-            // ✨ Visual preview of selected category
             HStack {
                 Spacer()
                 Image(systemName: selectedCategory.systemImage)
@@ -189,13 +187,22 @@ struct AddTransactionView: View {
         }
         
         do {
-            try context.save() // WICHTIG: explizit speichern
-            // Optional: Nur das spezifische Widget reloaden
-            // WidgetCenter.shared.reloadTimelines(ofKind: "ExpenseTrackerWidget")
-            WidgetCenter.shared.reloadAllTimelines()
+            // Debug: Log before save
+            print("💾 [SAVE] About to save transaction: \(title), \(amountValue)")
+            
+            // Save the transaction
+            try context.save()
+            
+            print("✅ [SAVE] Transaction saved successfully")
+            
+            // Reload widget with small delay to ensure persistence
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                print("🔄 [SAVE] Reloading widget timelines...")
+                WidgetCenter.shared.reloadAllTimelines()
+            }
+            
         } catch {
-            // Fehlerbehandlung, falls Speichern fehlschlägt
-            print("Failed to save transaction: \(error)")
+            print("❌ [SAVE] Failed to save transaction: \(error)")
             HapticManager.shared.notification(type: .error)
             return
         }
