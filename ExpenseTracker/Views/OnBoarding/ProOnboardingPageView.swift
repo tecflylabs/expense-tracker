@@ -57,7 +57,7 @@ struct ProOnboardingPageView: View {
                         .font(.system(size: 28, weight: .bold))
                         .foregroundStyle(.orange)
                 } else {
-                    Text("Just €4.99")
+                    Text("Loading price..")
                         .font(.system(size: 28, weight: .bold))
                         .foregroundStyle(.orange)
                         .redacted(reason: .placeholder)
@@ -90,6 +90,9 @@ struct ProOnboardingPageView: View {
             .animation(.spring(duration: 0.8).delay(1.1), value: appeared)
             
             Spacer()
+        }
+        .task {
+            await purchaseManager.loadProducts()
         }
         .onAppear {
             appeared = true
