@@ -46,6 +46,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2218B1D12F11AE850038798B /* Exceptions for "ExpenseTrackerWidget" folder in "ExpenseTracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WidgetModelContainer.swift,
+			);
+			target = 221DF0672F03FA570028C24A /* ExpenseTracker */;
+		};
 		221DF10A2F0AA3290028C24A /* Exceptions for "ExpenseTrackerWidget" folder in "ExpenseTrackerWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -101,6 +108,7 @@
 		221DF0FD2F0AA3270028C24A /* ExpenseTrackerWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				2218B1D12F11AE850038798B /* Exceptions for "ExpenseTrackerWidget" folder in "ExpenseTracker" target */,
 				221DF10A2F0AA3290028C24A /* Exceptions for "ExpenseTrackerWidget" folder in "ExpenseTrackerWidgetExtension" target */,
 			);
 			path = ExpenseTrackerWidget;

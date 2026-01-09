@@ -25,10 +25,12 @@ struct WidgetEntry: TimelineEntry {
 struct Provider: TimelineProvider {
     
     
+    private let container = WidgetContainerManager.shared.container
     
     @MainActor
     func placeholder(in context: Context) -> WidgetEntry {
-        WidgetEntry(
+        print("🔷 [WIDGET] placeholder called")
+        return WidgetEntry(
             date: Date(),
             balance: 1250.50,
             recentTransactions: [],
@@ -39,31 +41,84 @@ struct Provider: TimelineProvider {
     
     @MainActor
     func getSnapshot(in context: Context, completion: @escaping (WidgetEntry) -> Void) {
+        print("📸 [WIDGET] getSnapshot called")
         let entry = fetchData()
+        print("📸 [WIDGET] getSnapshot entry - balance: \(entry.balance), transactions: \(entry.recentTransactions.count)")
         completion(entry)
     }
     
     @MainActor
     func getTimeline(in context: Context, completion: @escaping (Timeline<WidgetEntry>) -> Void) {
+        print("⏰ [WIDGET] getTimeline called at: \(Date())")
+        
         let entry = fetchData()
         
-        // Update every 15 minutes
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+        print("⏰ [WIDGET] getTimeline entry - balance: \(entry.balance), transactions: \(entry.recentTransactions.count)")
+        
+        
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+        
+        print("⏰ [WIDGET] Timeline created, next update: \(nextUpdate)")
         
         completion(timeline)
     }
     
     @MainActor
     private func fetchData() -> WidgetEntry {
-        let container = widgetModelContainer()
+        print("🔍 [WIDGET] fetchData called at: \(Date())")
+        
+     
         let context = ModelContext(container)
         
         let descriptor = FetchDescriptor<Transaction>(
             sortBy: [SortDescriptor(\.date, order: .reverse)]
         )
         
-        guard let transactions = try? context.fetch(descriptor) else {
+       
+        do {
+            let transactions = try context.fetch(descriptor)
+            print("✅ [WIDGET] Successfully fetched \(transactions.count) transactions")
+            
+           
+            if transactions.isEmpty {
+                print("⚠️ [WIDGET] No transactions found in database!")
+            }
+            
+            let totalIncome = transactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
+            let totalExpense = transactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
+            let balance = totalIncome - totalExpense
+            
+            
+            print("💰 [WIDGET] Calculated balance: \(balance) (Income: \(totalIncome), Expense: \(totalExpense))")
+            
+            // Current month data
+            let calendar = Calendar.current
+            let now = Date()
+            let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
+            
+            let monthlyTransactions = transactions.filter { $0.date >= monthStart }
+            let monthlyIncome = monthlyTransactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
+            let monthlyExpense = monthlyTransactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
+            
+            let entry = WidgetEntry(
+                date: Date(),
+                balance: balance,
+                recentTransactions: Array(transactions.prefix(5)),
+                monthlyIncome: monthlyIncome,
+                monthlyExpense: monthlyExpense
+            )
+            
+         
+            print("📦 [WIDGET] Created entry with balance: \(entry.balance)")
+            
+            return entry
+            
+        } catch {
+           
+            print("❌ [WIDGET] Fetch failed with error: \(error)")
+            print("❌ [WIDGET] Error details: \(error.localizedDescription)")
+            
             return WidgetEntry(
                 date: Date(),
                 balance: 0,
@@ -72,27 +127,6 @@ struct Provider: TimelineProvider {
                 monthlyExpense: 0
             )
         }
-        
-        let totalIncome = transactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
-        let totalExpense = transactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
-        let balance = totalIncome - totalExpense
-        
-        // Current month data
-        let calendar = Calendar.current
-        let now = Date()
-        let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
-        
-        let monthlyTransactions = transactions.filter { $0.date >= monthStart }
-        let monthlyIncome = monthlyTransactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
-        let monthlyExpense = monthlyTransactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
-        
-        return WidgetEntry(
-            date: Date(),
-            balance: balance,
-            recentTransactions: Array(transactions.prefix(5)),
-            monthlyIncome: monthlyIncome,
-            monthlyExpense: monthlyExpense
-        )
     }
 }
 

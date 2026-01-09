@@ -1,0 +1,63 @@
+//
+//  WidgetContainerManager.swift
+//  ExpenseTracker
+//
+//  Created by Manuel Zangl on 09.01.26.
+//
+
+import Foundation
+import SwiftData
+
+@MainActor
+final class WidgetContainerManager {
+    static let shared = WidgetContainerManager()
+    
+    let container: ModelContainer
+    
+    private init() {
+        print("🏗️ [WIDGET CONTAINER] Initializing...")
+        
+        // ✅ ALLE Models die Transaction brauchen könnte!
+        let schema = Schema([
+            Transaction.self,
+            RecurringTransaction.self,
+            BudgetGoal.self,
+            Attachment.self
+        ])
+        
+        // ✅ App Group URL (WICHTIG!)
+        guard let groupURL = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: "group.com.hurricane.pennyflow"
+        ) else {
+            print("❌ [WIDGET CONTAINER] App Group not found!")
+            fatalError("App Group 'group.com.hurricane.pennyflow' not accessible. Check Signing & Capabilities.")
+        }
+        
+        let url = groupURL.appendingPathComponent("ExpenseTracker.sqlite")
+        
+        print("🔍 [WIDGET CONTAINER] Database URL: \(url.path)")
+        print("🔍 [WIDGET CONTAINER] File exists: \(FileManager.default.fileExists(atPath: url.path))")
+        
+        // ✅ Check file size (debug)
+        if let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
+           let fileSize = attrs[.size] as? Int64 {
+            print("📊 [WIDGET CONTAINER] Database size: \(fileSize) bytes")
+        }
+        
+        // ✅ ModelConfiguration mit App Group URL
+        let configuration = ModelConfiguration(
+            schema: schema,
+            url: url,
+            allowsSave: false  // Widget nur lesen, nicht schreiben!
+        )
+        
+        do {
+            self.container = try ModelContainer(for: schema, configurations: [configuration])
+            print("✅ [WIDGET CONTAINER] ModelContainer created successfully")
+        } catch {
+            print("❌ [WIDGET CONTAINER] Failed to create container: \(error)")
+            print("❌ [WIDGET CONTAINER] Error details: \(error.localizedDescription)")
+            fatalError("Could not create ModelContainer for widget: \(error)")
+        }
+    }
+}
