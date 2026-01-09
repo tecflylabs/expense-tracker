@@ -55,11 +55,10 @@ struct Provider: TimelineProvider {
         
         print("⏰ [WIDGET] getTimeline entry - balance: \(entry.balance), transactions: \(entry.recentTransactions.count)")
         
+        // Sofortige Updates statt 5 Minuten
+        let timeline = Timeline(entries: [entry], policy: .atEnd)
         
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        
-        print("⏰ [WIDGET] Timeline created, next update: \(nextUpdate)")
+        print("⏰ [WIDGET] Timeline created with atEnd policy")
         
         completion(timeline)
     }
@@ -68,27 +67,45 @@ struct Provider: TimelineProvider {
     private func fetchData() -> WidgetEntry {
         print("🔍 [WIDGET] fetchData called at: \(Date())")
         
-     
         let context = ModelContext(container)
+        
+        // Prüfe Container-Status
+        print("🔍 [WIDGET] Container schema: \(container.schema.entities.map { $0.name })")
         
         let descriptor = FetchDescriptor<Transaction>(
             sortBy: [SortDescriptor(\.date, order: .reverse)]
         )
         
-       
         do {
             let transactions = try context.fetch(descriptor)
             print("✅ [WIDGET] Successfully fetched \(transactions.count) transactions")
             
-           
             if transactions.isEmpty {
                 print("⚠️ [WIDGET] No transactions found in database!")
+                
+                // Prüfe ob Datenbank überhaupt existiert
+                if let groupURL = FileManager.default.containerURL(
+                    forSecurityApplicationGroupIdentifier: "group.com.hurricane.pennyflow"
+                ) {
+                    let dbURL = groupURL.appendingPathComponent("ExpenseTracker.sqlite")
+                    let exists = FileManager.default.fileExists(atPath: dbURL.path)
+                    print("⚠️ [WIDGET] Database file exists: \(exists)")
+                    
+                    if let attrs = try? FileManager.default.attributesOfItem(atPath: dbURL.path),
+                       let size = attrs[.size] as? Int64 {
+                        print("⚠️ [WIDGET] Database size: \(size) bytes")
+                    }
+                }
+            } else {
+                // Logge erste Transaktion zur Verifikation
+                if let first = transactions.first {
+                    print("✅ [WIDGET] First transaction: \(first.title), \(first.amount), \(first.date)")
+                }
             }
             
             let totalIncome = transactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
             let totalExpense = transactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
             let balance = totalIncome - totalExpense
-            
             
             print("💰 [WIDGET] Calculated balance: \(balance) (Income: \(totalIncome), Expense: \(totalExpense))")
             
@@ -109,13 +126,11 @@ struct Provider: TimelineProvider {
                 monthlyExpense: monthlyExpense
             )
             
-         
             print("📦 [WIDGET] Created entry with balance: \(entry.balance)")
             
             return entry
             
         } catch {
-           
             print("❌ [WIDGET] Fetch failed with error: \(error)")
             print("❌ [WIDGET] Error details: \(error.localizedDescription)")
             

@@ -48,7 +48,7 @@ final class WidgetContainerManager {
         let configuration = ModelConfiguration(
             schema: schema,
             url: url,
-            allowsSave: false
+            allowsSave: true
         )
         
         do {
