@@ -10,26 +10,24 @@ import Foundation
 
 @MainActor
 func widgetModelContainer() -> ModelContainer {
-    let schema = Schema([Transaction.self, Attachment.self])
-
+    let schema = Schema([
+        Transaction.self,
+        Attachment.self
+    ])
     
-#if targetEnvironment(simulator)
-    let configuration = ModelConfiguration(
-        schema: schema,
-        isStoredInMemoryOnly: false
-    )
-#else
-    let groupURL = FileManager.default.containerURL(
+    guard let groupURL = FileManager.default.containerURL(
         forSecurityApplicationGroupIdentifier: "group.com.hurricane.pennyflow"
-    )!
+    ) else {
+        fatalError("App Group container not found!")
+    }
     
     let url = groupURL.appendingPathComponent("ExpenseTracker.sqlite")
     
     let configuration = ModelConfiguration(
+        schema: schema,
         url: url,
         allowsSave: true
     )
-#endif
     
     do {
         return try ModelContainer(for: schema, configurations: [configuration])
@@ -37,4 +35,3 @@ func widgetModelContainer() -> ModelContainer {
         fatalError("Could not create ModelContainer for widget: \(error)")
     }
 }
-

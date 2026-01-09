@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct AddTransactionView: View {
     @Environment(\.modelContext) private var context
@@ -186,6 +187,7 @@ struct AddTransactionView: View {
             )
             context.insert(newTransaction)
         }
+        WidgetCenter.shared.reloadAllTimelines()
         
         withAnimation(.smooth) {
             dismiss()
