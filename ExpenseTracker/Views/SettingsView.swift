@@ -25,8 +25,8 @@ struct SettingsView: View {
     
     // MARK: - URLs
     private let supportEmail = "zangl.manuel@gmail.com"
-    private let githubPagesBaseURL = "https://hurricane005.github.io/expense-tracker"
-    private let githubRepoURL = "https://github.com/Hurricane005/expense-tracker"
+    private let githubPagesBaseURL = "https://tecflylabs.github.io/expense-tracker"
+    private let githubRepoURL = "https://github.com/tecflylabs/expense-tracker"
     
     private var privacyPolicyURL: URL? {
         URL(string: "\(githubPagesBaseURL)/privacy.html")
@@ -303,8 +303,6 @@ struct SettingsView: View {
     
     private var aboutSection: some View {
         Section {
-            LabeledContent("Version", value: "1.0.0")
-            LabeledContent("Build", value: "1")
             
             Link(destination: URL(string: githubRepoURL)!) {
                 HStack {
