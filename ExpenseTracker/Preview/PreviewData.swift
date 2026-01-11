@@ -62,7 +62,7 @@ func previewContainer() -> ModelContainer {
         configurations: ModelConfiguration(isStoredInMemoryOnly: true)
     )
     
-    // Sample-Daten einfügen
+    
     for transaction in Transaction.previewSamples {
         container.mainContext.insert(transaction)
     }

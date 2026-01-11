@@ -43,7 +43,7 @@ extension OnboardingPage {
             description: "Lock your financial data with Face ID. Your privacy is our priority - all data stays on your device.",
             isProPage: false
         ),
-        // Pro Promo Page
+        
         OnboardingPage(
             title: "Unlock Full Potential",
             subtitle: "Get PennyFlow Pro",

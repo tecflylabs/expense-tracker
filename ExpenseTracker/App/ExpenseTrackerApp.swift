@@ -36,7 +36,7 @@ struct ExpenseTrackerApp: App {
                     .preferredColorScheme(colorScheme)
                     .blur(radius: showLockScreen ? 10 : 0)
                 
-                // ✅ CHANGED: Only show lock if onboarding completed
+                
                 if showLockScreen && biometricLockEnabled && hasCompletedOnboarding {
                     BiometricLockView {
                         withAnimation {
@@ -50,21 +50,21 @@ struct ExpenseTrackerApp: App {
             .onAppear {
                 setupLifecycleObservers()
                 
-                // ✅ PRIORITY 1: Check onboarding FIRST
+                
                 if !hasCompletedOnboarding {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         showOnboarding = true
                     }
-                    // ✅ PRIORITY 2: Then check lock (only if onboarding done)
+                    
                 } else if biometricLockEnabled && authManager.isBiometricAvailable {
                     showLockScreen = true
                 }
             }
             .fullScreenCover(isPresented: $showOnboarding) {
                 OnboardingView()
-                    .environment(purchaseManager)  // ✅ NEW
+                    .environment(purchaseManager)
             }
-            // ✅ NEW: When onboarding completes, check if we need lock
+            
             .onChange(of: hasCompletedOnboarding) { oldValue, newValue in
                 if newValue && biometricLockEnabled && authManager.isBiometricAvailable {
                     // Onboarding just completed, now show lock
@@ -75,7 +75,7 @@ struct ExpenseTrackerApp: App {
             }
         }
         .modelContainer(sharedModelContainer())
-        .environment(purchaseManager)  // ✅ NEW - Global injection
+        .environment(purchaseManager)
     }
     
     // MARK: - Lifecycle Observers
@@ -99,7 +99,7 @@ struct ExpenseTrackerApp: App {
     }
     
     private func handleAppBackground() {
-        // ✅ CHANGED: Only record time if onboarding completed
+        
         guard hasCompletedOnboarding && biometricLockEnabled && authManager.isBiometricAvailable else { return }
         
         authManager.recordBackgroundTime()
@@ -110,7 +110,7 @@ struct ExpenseTrackerApp: App {
     }
     
     private func handleAppForeground() {
-        // ✅ CHANGED: Only check lock if onboarding completed
+        
         guard hasCompletedOnboarding && biometricLockEnabled && authManager.isBiometricAvailable else { return }
         
         if authManager.isAuthenticated {

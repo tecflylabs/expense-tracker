@@ -88,7 +88,7 @@ enum DateRangeFilter: String, CaseIterable, Identifiable {
             return (start, end)
             
         case .custom:
-            return nil // Custom dates set by user
+            return nil 
         }
     }
 }

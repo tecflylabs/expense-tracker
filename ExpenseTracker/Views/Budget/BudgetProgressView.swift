@@ -32,7 +32,7 @@ struct BudgetProgressView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header - ✨ NOW WITH CATEGORY COLORS
+            // Header - NOW WITH CATEGORY COLORS
             HStack {
                 Image(systemName: budget.category.systemImage)
                     .font(.title3)
@@ -53,7 +53,7 @@ struct BudgetProgressView: View {
                     .imageScale(.small)
             }
             
-            // Progress Bar - ✨ Warning color takes priority
+            // Progress Bar - Warning color takes priority
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     // Background

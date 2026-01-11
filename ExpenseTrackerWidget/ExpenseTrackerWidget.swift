@@ -69,7 +69,7 @@ struct Provider: TimelineProvider {
         
         let context = ModelContext(container)
         
-        // Prüfe Container-Status
+        
         print("🔍 [WIDGET] Container schema: \(container.schema.entities.map { $0.name })")
         
         let descriptor = FetchDescriptor<Transaction>(
@@ -83,7 +83,7 @@ struct Provider: TimelineProvider {
             if transactions.isEmpty {
                 print("⚠️ [WIDGET] No transactions found in database!")
                 
-                // Prüfe ob Datenbank überhaupt existiert
+                
                 if let groupURL = FileManager.default.containerURL(
                     forSecurityApplicationGroupIdentifier: "group.com.hurricane.pennyflow"
                 ) {
@@ -97,7 +97,7 @@ struct Provider: TimelineProvider {
                     }
                 }
             } else {
-                // Logge erste Transaktion zur Verifikation
+                
                 if let first = transactions.first {
                     print("✅ [WIDGET] First transaction: \(first.title), \(first.amount), \(first.date)")
                 }
@@ -109,7 +109,7 @@ struct Provider: TimelineProvider {
             
             print("💰 [WIDGET] Calculated balance: \(balance) (Income: \(totalIncome), Expense: \(totalExpense))")
             
-            // Current month data
+            
             let calendar = Calendar.current
             let now = Date()
             let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
@@ -252,7 +252,7 @@ struct LargeWidgetView: View {
                     .foregroundStyle(.secondary)
             }
             
-            // Balance Card
+            
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Balance")

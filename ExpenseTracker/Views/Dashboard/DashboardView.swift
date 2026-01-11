@@ -45,7 +45,7 @@ struct DashboardView: View {
             .sorted { $0.amount > $1.amount }
     }
     
-    // Active budgets
+    
     private var activeBudgets: [BudgetGoal] {
         budgets.filter { $0.isActive }
     }

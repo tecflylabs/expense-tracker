@@ -17,7 +17,7 @@ struct CategoryRowView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Icon - ✨ NOW WITH CATEGORY COLORS
+            // Icon
             Image(systemName: category.systemImage)
                 .font(.title3)
                 .foregroundStyle(.white)
@@ -32,7 +32,7 @@ struct CategoryRowView: View {
                 Text(category.rawValue)
                     .font(.headline)
                 
-                // Progress Bar - ✨ NOW WITH CATEGORY COLORS
+                // Progress Bar
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         // Background
@@ -40,7 +40,7 @@ struct CategoryRowView: View {
                             .fill(.gray.opacity(0.2))
                             .frame(height: 6)
                         
-                        // Progress - ✨ Category color
+                        // Progress - Category color
                         RoundedRectangle(cornerRadius: 4)
                             .fill(category.gradient)
                             .frame(width: geometry.size.width * (percentage / 100), height: 6)

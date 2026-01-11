@@ -12,7 +12,7 @@ enum CurrencyFormatting {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = locale
-        formatter.currencyCode = currencyCode      // <- wichtig [web:79][web:83]
+        formatter.currencyCode = currencyCode      
         formatter.maximumFractionDigits = 2
         return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }

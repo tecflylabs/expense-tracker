@@ -60,8 +60,8 @@ class ExportManager {
         let format = UIGraphicsPDFRendererFormat()
         format.documentInfo = pdfMetaData as [String: Any]
         
-        let pageWidth = 8.5 * 72.0  // A4 width in points
-        let pageHeight = 11 * 72.0  // A4 height in points
+        let pageWidth = 8.5 * 72.0  
+        let pageHeight = 11 * 72.0
         let pageRect = CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight)
         
         let renderer = UIGraphicsPDFRenderer(bounds: pageRect, format: format)
@@ -71,7 +71,7 @@ class ExportManager {
             
             var currentY: CGFloat = 60
             
-            // Title
+            
             let titleAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.boldSystemFont(ofSize: 24),
                 .foregroundColor: UIColor.label
@@ -80,7 +80,7 @@ class ExportManager {
             title.draw(at: CGPoint(x: 60, y: currentY), withAttributes: titleAttributes)
             currentY += 40
             
-            // Date Range
+            
             let dateAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 12),
                 .foregroundColor: UIColor.secondaryLabel
@@ -89,7 +89,7 @@ class ExportManager {
             dateString.draw(at: CGPoint(x: 60, y: currentY), withAttributes: dateAttributes)
             currentY += 40
             
-            // Summary Box
+            
             drawSummaryBox(
                 at: CGPoint(x: 60, y: currentY),
                 totalIncome: totalIncome,
@@ -98,7 +98,7 @@ class ExportManager {
             )
             currentY += 120
             
-            // Transactions Header
+            
             let headerAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.boldSystemFont(ofSize: 16),
                 .foregroundColor: UIColor.label
@@ -106,7 +106,7 @@ class ExportManager {
             "Transactions".draw(at: CGPoint(x: 60, y: currentY), withAttributes: headerAttributes)
             currentY += 30
             
-            // Transactions List
+            
             let transactionAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 10),
                 .foregroundColor: UIColor.label
@@ -148,7 +148,7 @@ class ExportManager {
     ) {
         let boxRect = CGRect(x: origin.x, y: origin.y, width: 480, height: 100)
         
-        // Background
+        
         UIColor.systemGray6.setFill()
         UIBezierPath(roundedRect: boxRect, cornerRadius: 12).fill()
         
@@ -162,15 +162,15 @@ class ExportManager {
             .foregroundColor: UIColor.label
         ]
         
-        // Income
+        
         "Total Income".draw(at: CGPoint(x: origin.x + 20, y: origin.y + 20), withAttributes: attributes)
         totalIncome.asCurrency(currencyCode: currencyCode).draw(at: CGPoint(x: origin.x + 20, y: origin.y + 40), withAttributes: boldAttributes)
         
-        // Expense
+        
         "Total Expense".draw(at: CGPoint(x: origin.x + 180, y: origin.y + 20), withAttributes: attributes)
         totalExpense.asCurrency(currencyCode: currencyCode).draw(at: CGPoint(x: origin.x + 180, y: origin.y + 40), withAttributes: boldAttributes)
         
-        // Balance
+        
         "Balance".draw(at: CGPoint(x: origin.x + 340, y: origin.y + 20), withAttributes: attributes)
         balance.asCurrency(currencyCode: currencyCode).draw(at: CGPoint(x: origin.x + 340, y: origin.y + 40), withAttributes: boldAttributes)
     }

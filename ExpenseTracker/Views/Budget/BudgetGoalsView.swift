@@ -27,10 +27,10 @@ struct BudgetGoalsView: View {
                 } else {
                     ScrollView {
                         VStack(spacing: 16) {
-                            // Overview Card
+                            
                             overviewCard
                             
-                            // Budget List
+                            
                             ForEach(budgets.filter { $0.isActive }) { budget in
                                 BudgetProgressView(budget: budget, transactions: transactions)
                                     .contextMenu {

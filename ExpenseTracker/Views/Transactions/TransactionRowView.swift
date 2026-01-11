@@ -43,7 +43,7 @@ struct TransactionRowView: View {
                 Text(transaction.title)
                     .font(.headline)
                 
-                // ✨ OPTION 1: Category Dot + Tags (NO BREAKING)
+                
                 HStack(spacing: 6) {
                     // Color indicator
                     Circle()

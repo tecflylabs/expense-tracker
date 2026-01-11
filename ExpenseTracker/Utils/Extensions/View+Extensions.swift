@@ -27,8 +27,7 @@ extension View {
     
     // MARK: - Smooth Appear Animation
     
-    /// Smoothly animates the view from slight offset & transparent to fully visible.
-    /// Uses an internal state wrapper so we don't assign to modifiers directly.
+    
     func smoothAppear(delay: Double = 0) -> some View {
         SmoothAppearView(content: self, delay: delay)
     }

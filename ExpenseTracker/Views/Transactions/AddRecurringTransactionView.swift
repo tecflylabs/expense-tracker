@@ -139,7 +139,7 @@ struct AddRecurringTransactionView: View {
     // MARK: - Methods
     
     private func saveRecurring() {
-        // Pro Check (nur bei neuen, Edit erlaubt)
+        // Pro Check 
         if recurringToEdit == nil && !PurchaseManager.shared.hasPro {
             showPaywall = true
             return

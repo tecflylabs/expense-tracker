@@ -7,14 +7,14 @@ import SwiftUI
 
 @Observable
 class ChartsViewModel {
-    // Eingehende Daten
+    
     var transactions: [Transaction] = [] {
         didSet {
             recalc()
         }
     }
     
-    // Fertige Chart-Daten (werden von Views gelesen)
+    
     var categoryChartData: [CategoryChartData] = []
     var monthlyChartData: [MonthlyData] = []
     var balanceOverTimeData: [DailyBalanceData] = []
@@ -35,7 +35,7 @@ class ChartsViewModel {
     private func recalc() {
         let current = transactions
         
-        // Wenn leer, sofort alles leeren
+        
         guard !current.isEmpty else {
             categoryChartData = []
             monthlyChartData = []
@@ -49,7 +49,7 @@ class ChartsViewModel {
             let balance = Self.makeBalanceData(from: current)
             
             DispatchQueue.main.async {
-                // Nur anwenden, wenn sich Basisdaten nicht geändert haben
+                
                 if current == self.transactions {
                     self.categoryChartData = category
                     self.monthlyChartData = monthly

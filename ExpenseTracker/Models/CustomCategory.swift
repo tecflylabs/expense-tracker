@@ -9,9 +9,7 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-/// Custom categories (Pro Feature)
-/// Free users: 8 default categories only
-/// Pro users: Unlimited custom categories
+
 @Model
 final class CustomCategory {
     var id: UUID
@@ -37,12 +35,12 @@ final class CustomCategory {
         self.isDefault = isDefault
     }
     
-    // Computed color from hex
+    
     var color: Color {
         Color(hex: colorHex) ?? .gray
     }
     
-    // Gradient for visual consistency
+    
     var gradient: LinearGradient {
         LinearGradient(
             colors: [color, color.opacity(0.7)],

@@ -24,7 +24,7 @@ class PurchaseManager {
         purchasedProductIDs.contains(proProductID)
     }
     
-    // ✅ NEW: Single product accessor for easy access
+    
     var product: Product? {
         products.first(where: { $0.id == proProductID })
     }

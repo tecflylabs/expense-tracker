@@ -81,7 +81,7 @@ class BiometricAuthManager {
     
     func shouldRequireAuthentication(timeoutMinutes: Int) -> Bool {
         guard let lastBackground = lastBackgroundTime else {
-            return true // First launch
+            return true 
         }
         
         let timeoutSeconds = TimeInterval(timeoutMinutes * 60)

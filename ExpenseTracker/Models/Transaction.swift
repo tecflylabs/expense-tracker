@@ -44,7 +44,7 @@ final class Transaction {
         return matches.compactMap { match in
             guard let range = Range(match.range, in: text) else { return nil }
             let tag = String(text[range])
-            return tag.dropFirst().lowercased() // Remove # and lowercase
+            return tag.dropFirst().lowercased() 
         }
     }
     

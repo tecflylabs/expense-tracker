@@ -40,7 +40,7 @@ struct TagChipView: View {
     }
 }
 
-// Tag List Container
+
 struct TagListView: View {
     let tags: [String]
     let onTagTap: ((String) -> Void)?

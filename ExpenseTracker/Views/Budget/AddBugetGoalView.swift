@@ -90,7 +90,7 @@ struct AddBudgetGoalView: View {
     }
     
     private func saveBudgetGoal() {
-        // Pro Check
+        
         if !PurchaseManager.shared.hasPro && existingBudgets.count >= freeBudgetLimit {
             showPaywall = true
             return

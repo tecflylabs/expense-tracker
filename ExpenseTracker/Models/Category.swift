@@ -40,7 +40,7 @@ enum Category: String, Codable, CaseIterable, Plottable {
         }
     }
     
-    // ✨ NEW: Category Colors
+    
     var color: Color {
         switch self {
         case .food:
@@ -62,7 +62,7 @@ enum Category: String, Codable, CaseIterable, Plottable {
         }
     }
     
-    // Gradient for visual richness
+    
     var gradient: LinearGradient {
         LinearGradient(
             colors: [color, color.opacity(0.7)],

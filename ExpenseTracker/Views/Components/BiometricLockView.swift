@@ -72,7 +72,7 @@ struct BiometricLockView: View {
         }
         .onAppear {
             appeared = true
-            // Auto-trigger authentication on appear
+            
             Task {
                 try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s delay
                 authenticateUser()
