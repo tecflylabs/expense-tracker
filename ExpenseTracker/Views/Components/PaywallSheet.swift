@@ -18,6 +18,7 @@ struct PaywallSheet: View {
     
     var body: some View {
         NavigationStack {
+            ScrollView {
             VStack(spacing: 32) {
                 VStack(spacing: 12) {
                     Image(systemName: "crown.fill")
@@ -137,6 +138,7 @@ struct PaywallSheet: View {
                     }
                 }
             }
+        }
         }
     }
 }
